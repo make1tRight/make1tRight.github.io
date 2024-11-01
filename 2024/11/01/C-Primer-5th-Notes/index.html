@@ -5,7 +5,7 @@
     
     <link rel='stylesheet' href="/./css/dracula.css">
 
-        <title>Hello World</title>
+        <title>C++ Primer 5th Notes</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=2.0">
 <link rel="stylesheet" href="/css/style.css">
@@ -73,11 +73,11 @@
             <article class="al_article">
                 <header>
                     <h1 class="al_page_title">
-                        Hello World
+                        C++ Primer 5th Notes
                     </h1>
                     <div class="al_page_info dis_flex">
                         <div class="al_page_content_info">
-                            Tue October 29, 2024 03:06 PM
+                            Fri November 1, 2024 07:24 PM
                         </div>
 
                         
@@ -89,25 +89,55 @@
 
                 
                     <div class="al_page_content_outline">
-                        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+                        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%BC%80%E5%A7%8B"><span class="toc-text">第一章 - 开始</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="toc-text">第二章 - 变量和基本类型</span></a></li></ol>
                     </div>
                 
 
                 
                 <section id="post-body">
-                    <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                    <h4 id="第一章-开始"><a href="#第一章-开始" class="headerlink" title="第一章 - 开始"></a>第一章 - 开始</h4><ol>
+<li>指针和引用<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>引用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>也是一个变量，但是他的值是另一个变量的地址，可以改变指向</td>
+<td>就是变量别名，从一而终，引用必须初始化、空值不能引用</td>
+</tr>
+<tr>
+<td>用于动态内存分配、数组操作以及函数参数传递</td>
+<td>用于函数参数传递、操作符重载、创建别名</td>
+</tr>
+<tr>
+<td>顶层const表示指针本身是个常量</td>
+<td>指针是一个对象, 所以可以存在对指针的引用</td>
+</tr>
+<tr>
+<td>底层const表示指针指向的值是个常量</td>
+<td></td>
+</tr>
+<tr>
+<td>nullptr是指针字面值, 可用来初始化指针</td>
+<td></td>
+</tr>
+<tr>
+<td>引用不是对象, 所以不能定义一个指向引用的指针</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li>不属于标准库的头文件用双引号””来包围</li>
+<li>类定义的是自己的数据结构及其相关操作, 类的成员函数就是方法;</li>
+</ol>
+<h4 id="第二章-变量和基本类型"><a href="#第二章-变量和基本类型" class="headerlink" title="第二章 - 变量和基本类型"></a>第二章 - 变量和基本类型</h4><ol>
+<li>使用变量的建议<br>1.1. 数值超过了int的表示范围直接用long long:w<br>1.2. 执行浮点数运算用double<br>1.3. 带符号数designed会自动转换成无符号数undesigned</li>
+<li>对象object就是一片能够存储数据并且具有类型的内存空间</li>
+<li>在变量名字前加extern可以只声明变量, 不定义变量 -&gt; 避免其他文件对该变量的重复定义</li>
+<li>void<em>可用于存放任意对象的地址, 是一种特殊的指针类型；不能对void</em>执行解引用操作</li>
+</ol>
 
                 </section>
 
@@ -120,15 +150,15 @@
 
             
             <nav class="dis_flex al_post_nav">
-                <a class="al_post_nav_item dis_flex_acenter" href="/2024/11/01/C-Primer-5th-Notes/">
-                    
-                        <svg class="al_arrow">
-                            <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#svg-arrow-left"></use>
-                        </svg>
-                        <span class="al_text_ellipsis al_post_nav_desc">C++ Primer 5th Notes</span>
+                <a class="al_post_nav_item dis_flex_acenter" href="/">
                     
                 </a>
-                <a class="al_post_nav_item dis_flex_acenter" href="/">
+                <a class="al_post_nav_item dis_flex_acenter" href="/2024/10/29/hello-world/">
+                    
+                        <span class="al_text_ellipsis al_post_nav_desc">Hello World</span>
+                        <svg class="al_arrow">
+                            <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#svg-arrow-right"></use>
+                        </svg>
                     
                 </a>
             </nav>
