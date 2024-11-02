@@ -89,13 +89,13 @@
 
                 
                     <div class="al_page_content_outline">
-                        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%BC%80%E5%A7%8B"><span class="toc-text">第一章 - 开始</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="toc-text">第二章 - 变量和基本类型</span></a></li></ol>
+                        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%BC%80%E5%A7%8B"><span class="toc-text">第一章 - 开始</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%8F%98%E9%87%8F%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="toc-text">第二章 - 变量和基本类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E5%90%91%E9%87%8F%E5%92%8C%E6%95%B0%E7%BB%84"><span class="toc-text">第三章 - 字符串、向量和数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">第四章 - 表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-%E8%AF%AD%E5%8F%A5"><span class="toc-text">第五章 - 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%87%BD%E6%95%B0"><span class="toc-text">第六章 - 函数</span></a></li></ol>
                     </div>
                 
 
                 
                 <section id="post-body">
-                    <h4 id="第一章-开始"><a href="#第一章-开始" class="headerlink" title="第一章 - 开始"></a>第一章 - 开始</h4><ol>
+                    <h3 id="第一章-开始"><a href="#第一章-开始" class="headerlink" title="第一章 - 开始"></a>第一章 - 开始</h3><ol>
 <li>指针和引用<table>
 <thead>
 <tr>
@@ -132,11 +132,50 @@
 <li>不属于标准库的头文件用双引号””来包围</li>
 <li>类定义的是自己的数据结构及其相关操作, 类的成员函数就是方法;</li>
 </ol>
-<h4 id="第二章-变量和基本类型"><a href="#第二章-变量和基本类型" class="headerlink" title="第二章 - 变量和基本类型"></a>第二章 - 变量和基本类型</h4><ol>
-<li>使用变量的建议<br>1.1 数值超过了int的表示范围直接用long long:w<br>1.2 执行浮点数运算用double<br>1.3 带符号数designed会自动转换成无符号数undesigned</li>
+<h3 id="第二章-变量和基本类型"><a href="#第二章-变量和基本类型" class="headerlink" title="第二章 - 变量和基本类型"></a>第二章 - 变量和基本类型</h3><ol>
+<li>使用变量的建议</li>
+<li>数值超过了int的表示范围直接用long long</li>
+<li>执行浮点数运算用double</li>
+<li>带符号数designed会自动转换成无符号数undesigned</li>
 <li>对象object就是一片能够存储数据并且具有类型的内存空间</li>
 <li>在变量名字前加extern可以只声明变量, 不定义变量 -&gt; 避免其他文件对该变量的重复定义</li>
 <li>void* 可用于存放任意对象的地址, 是一种特殊的指针类型；不能对void*执行解引用操作</li>
+<li>const对象一定要初始化；const对象仅限在当前文件里面使用，如果想要让const对象跨文件使用可以在声明和定义的时候在const前面加extern<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 右边的是顶层const, 左边的是底层const</span></span><br><span class="line"><span class="comment">// 顶层const -&gt; 指针本身是一个常量</span></span><br><span class="line"><span class="comment">// 底层const -&gt; 指针指向的对象是一个常量</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> *<span class="type">const</span> p3 = p2;</span><br></pre></td></tr></table></figure></li>
+<li>常量表达式constexpr就是在编译过程中就能得到计算结果的表达式，自己定义的类不属于字面值类（字面值就是不能改变的值）不能被定义成constexptr</li>
+<li>auto会忽略顶层const，保留底层const</li>
+<li>decltype()的作用是返回括号内的表达式计算结果对应的类型；如果在括号里面加括号，返回的永远是引用</li>
+</ol>
+<h3 id="第三章-字符串、向量和数组"><a href="#第三章-字符串、向量和数组" class="headerlink" title="第三章 - 字符串、向量和数组"></a>第三章 - 字符串、向量和数组</h3><ol>
+<li>头文件不应该包含using声明，因为每个使用了该头文件的文件都会具有这个声明，有可能包含到我们不想要的名字，产生难以预料的错误</li>
+<li>用cin读取，碰到空白就会停下；如果想要读取一整行数据可以用getline(&amp;istream, string)</li>
+<li>迭代器指向某个元素，或者指向尾元素的下一个位置；迭代器的end成员就是返回尾元素的下一位置，也叫做尾后迭代器</li>
+</ol>
+<h3 id="第四章-表达式"><a href="#第四章-表达式" class="headerlink" title="第四章 - 表达式"></a>第四章 - 表达式</h3><ol>
+<li>左值代表对象的身份，右值代表对象的内容（值）；右值可以用左值来代替，左值不能用右值代替</li>
+<li>赋值运算符满足右结合律，也就是说先算后面的等号</li>
+<li>为什么少用i++，因为是返回自增之前的值，系统会为原始值保留副本，也就是说比++i多了一次拷贝</li>
+<li>sizeof()返回一个表达式或者一个类型名字所占用的字节数，对数组执行sizeof函数可以求出数组所占空间大小</li>
+<li>强制类型转换cast，不带底层const的可以用static_cast&lt;要转换类型&gt;；const_cast&lt;要转换类型&gt;只能改变运算对象的底层const</li>
+</ol>
+<h3 id="第五章-语句"><a href="#第五章-语句" class="headerlink" title="第五章 - 语句"></a>第五章 - 语句</h3><h3 id="第六章-函数"><a href="#第六章-函数" class="headerlink" title="第六章 - 函数"></a>第六章 - 函数</h3><ol>
+<li>自动对象就是在花括号里面创建的对象，一旦出了花括号这个对象就被销毁了，值会变成未定义的</li>
+<li>static类型的生命周期能够贯穿函数调用以及之后的时间，一直到程序终止才被销毁</li>
+<li>一个函数里面定义的变量叫做局部变量，会隐藏外层作用域中同名的变量<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -c 只链接不编译</span></span><br><span class="line">g++ -c factMain.cc</span><br><span class="line"><span class="comment"># -o 指定可执行文件的名称</span></span><br><span class="line">g++ main.cpp helper.cpp -o my_program</span><br></pre></td></tr></table></figure></li>
+<li>实参初始化形参的时候会忽略掉顶层const，所以尽量多使用常量引用，来限制函数所接受的实参</li>
+<li>initializer_list<type>这个标准库类型允许我们定义不同数量的实参，但是类型一定都是type；…也可以，但是只能放在形参列表的最后一个位置</li>
+<li>函数不能返回数组，但是可以返回指向数组的指针或者是数组的引用、定义类型别名；也可以用尾置返回类型返回一个数组auto func(int i) -&gt; int (*) [10];</li>
+<li>重载函数就是函数名相同，形参列表不同的一组函数；举例：只有返回类型相同是不行的；但是加不加const是一对重载函数</li>
+<li>inline和constexpr通常定义在头文件内</li>
+<li>inline可避免函数调用的开销，在调用点上‘内联地’展开；用于优化规模小、流程直接、调用频繁的函数</li>
+<li>constexpr返回类型和所有形参都必须是字面值类型，被隐式地归为内联函数</li>
+<li>assert是一种预处理宏，用来检查不能发生的条件，assert(expr)会先计算expr的结果</li>
+<li>如果表达式为假（0），assert会输出信息并终止程序执行；</li>
+<li>如果表达式为真（非0），assert什么也不做；</li>
+<li>assert定义在cassert头文件中</li>
+<li>assert行为依赖于NDEBUG这个预处理变量，如果没有定义NDEBUG，会正常进行检查并且执行#ifndef和#endif之间的代码；如果定义了NDEBUG，不会检查，也就是关闭了调试状态</li>
+<li>函数指针指向的是函数而不是一个对象，函数的类型由返回类型和形参类型共同决定；如果想要定义指向某个函数的函数指针，只需要把函数名字换成(*指针名字)就可以<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">lengthCompare</span><span class="params">(<span class="type">const</span> string&amp;, <span class="type">const</span> string&amp;)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 换掉函数名就可以, 右侧的形参列表说明pf指针指向的是函数</span></span><br><span class="line"><span class="built_in">bool</span> (*pf)(<span class="type">const</span> string&amp;, <span class="type">const</span> string&amp;);<span class="comment">//如果不写括号返回值类型是bool*</span></span><br></pre></td></tr></table></figure></li>
+<li>函数重载就是一个名字可以定义多个函数，根据现场有无声明以及匹配程度来选择可用函数；重载函数的形参数量或者形参类型不同，目的是为了避免二义性调用，也就是找不到唯一最佳匹配</li>
+<li>候选函数 -&gt; 可行函数（形参数量&#x3D;实参数量、实参类型能转换成形参类型） -&gt; 最佳匹配</li>
 </ol>
 
                 </section>
