@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/BinaryTreeSummary.png">
 <meta property="article:published_time" content="2024-11-07T03:06:14.000Z">
-<meta property="article:modified_time" content="2024-11-07T03:33:31.940Z">
+<meta property="article:modified_time" content="2024-11-07T11:10:31.390Z">
 <meta property="article:author" content="Make1tRight">
 <meta property="article:tag" content="leetcode">
 <meta name="twitter:card" content="summary">
@@ -187,7 +187,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-11-07 11:06:14 / Modified: 11:33:31" itemprop="dateCreated datePublished" datetime="2024-11-07T11:06:14+08:00">2024-11-07</time>
+              <time title="Created: 2024-11-07 11:06:14 / Modified: 19:10:31" itemprop="dateCreated datePublished" datetime="2024-11-07T11:06:14+08:00">2024-11-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -232,7 +232,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">inorderTraversal</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; result;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>) <span class="keyword">return</span> result;</span><br><span class="line"></span><br><span class="line">        stack&lt;TreeNode*&gt; st;</span><br><span class="line">        TreeNode *cur = root;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (cur != <span class="literal">nullptr</span> || !st.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (cur != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(cur);</span><br><span class="line">                cur = cur-&gt;left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                cur = st.<span class="built_in">top</span>(); st.<span class="built_in">pop</span>();</span><br><span class="line"></span><br><span class="line">                result.<span class="built_in">push_back</span>(cur-&gt;val);</span><br><span class="line">                cur = cur-&gt;right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <h4 id="二叉树递归遍历和非递归遍历的区别"><a href="#二叉树递归遍历和非递归遍历的区别" class="headerlink" title="二叉树递归遍历和非递归遍历的区别"></a>二叉树递归遍历和非递归遍历的区别</h4><ol>
-<li>迭代遍历和递归遍历的时间复杂度都是$$O(n)$$, 空间复杂度$$O(h)$$，h是树的高度</li>
+<li>迭代遍历和递归遍历的时间复杂度都是O(n), 空间复杂度O(h)，h是树的高度</li>
 <li>递归遍历深度受到系统调用栈的影响，迭代遍历使用的栈是用户自定义的，更灵活一些</li>
 </ol>
 <h4 id="二叉树的层序遍历（广度优先搜索）"><a href="#二叉树的层序遍历（广度优先搜索）" class="headerlink" title="二叉树的层序遍历（广度优先搜索）"></a>二叉树的层序遍历（广度优先搜索）</h4><ol>
