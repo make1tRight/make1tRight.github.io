@@ -155,6 +155,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/14/Hash-Table/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/14/Hash-Table/" class="post-title-link" itemprop="url">Hash Table</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-14 10:06:48 / Modified: 10:42:21" itemprop="dateCreated datePublished" datetime="2024-11-14T10:06:48+08:00">2024-11-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/../images/hash_table_summary.png" alt="hashtable_summary"></p>
+<h3 id="记录元素是否出现过"><a href="#记录元素是否出现过" class="headerlink" title="记录元素是否出现过"></a>记录元素是否出现过</h3><h4 id="两个数组的交集"><a href="#两个数组的交集" class="headerlink" title="两个数组的交集"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/intersection-of-two-arrays/">两个数组的交集</a></h4><ol>
+<li>思路：利用两个unordered_set，一个用来去重、一个用来去重+查找操作O(1)，最后结果转成vector</li>
+<li>这题不需要排序、不能让数据重复 -&gt; 用unordered_set合适（底层实现是哈希表，读写效率高）</li>
+<li>范围for循环和迭代器可以防止遍历越界</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 时间复杂度O(n + m), 空间复杂度O(n)</span></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">intersection</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums1, vector&lt;<span class="type">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        <span class="function">unordered_set&lt;<span class="type">int</span>&gt; <span class="title">numSet</span><span class="params">(nums<span class="number">1.</span>begin(), nums<span class="number">1.</span>end())</span></span>;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; result;                          <span class="comment">//用set的目的是去重</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="type">int</span> &amp;num : nums2) &#123;</span><br><span class="line">            <span class="keyword">if</span> (numSet.<span class="built_in">find</span>(num) != numSet.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                result.<span class="built_in">insert</span>(num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">vector</span>&lt;<span class="type">int</span>&gt;(result.<span class="built_in">begin</span>(), result.<span class="built_in">end</span>());   <span class="comment">//这里的时间复杂度是O(m)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="快乐数"><a href="#快乐数" class="headerlink" title="快乐数"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/happy-number/">快乐数</a></h4><ol>
+<li>思路：实现快乐数的计算方法，使用unordered_set查找计算结果是否出现过，如果出现过要及时退出，避免程序死循环</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">//快乐数的计算</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getSum</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n) &#123;</span><br><span class="line">            sum += (n % <span class="number">10</span>) * (n % <span class="number">10</span>);</span><br><span class="line">            n /= <span class="number">10</span>;</span><br><span class="line">        &#125;        </span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isHappy</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; happySet;</span><br><span class="line">        <span class="keyword">while</span> (n) &#123;</span><br><span class="line">            <span class="type">int</span> sum = <span class="built_in">getSum</span>(n);</span><br><span class="line">            <span class="keyword">if</span> (sum == <span class="number">1</span>) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            n = sum;</span><br><span class="line">            <span class="comment">// 这里加入set是为了防止无限循环</span></span><br><span class="line">            <span class="keyword">if</span> (happySet.<span class="built_in">find</span>(sum) != happySet.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            happySet.<span class="built_in">insert</span>(sum);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="两数之和"><a href="#两数之和" class="headerlink" title="两数之和"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/two-sum/description/">两数之和</a></h4><ol>
+<li>思路：使用unordered_map存储已遍历过的键值对，遍历数组nums[i]，并查询target-nums[i]是否出现在umap中，如果出现，说明找到了和为target的两个元素</li>
+<li>边找边加入更方便，不用考虑不同索引的元素相同的情况</li>
+<li>{}也是数组，结果可以直接返回花括号</li>
+<li>关于哈希容器的选择<ol>
+<li>因为要返回索引，所以要存储键值对，一定要在3种map里面选一种</li>
+<li>统计两数之和，只需要关注target-nums[i]和nums[i]，所以顺序不重要，为了获得更好的查找效率，选择unordered_map是最合适的</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">twoSum</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> target)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; umap; <span class="comment">//数值-索引</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); ++i) &#123;      <span class="comment">//边找边加最方便</span></span><br><span class="line">            <span class="keyword">auto</span> idx = umap.<span class="built_in">find</span>(target - nums[i]);  <span class="comment">//find返回的是指向所找元素的迭代器</span></span><br><span class="line">            <span class="keyword">if</span> (idx != umap.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                <span class="keyword">return</span> &#123;idx-&gt;second, i&#125;;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            umap.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(nums[i], i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="记录元素出现的次数"><a href="#记录元素出现的次数" class="headerlink" title="记录元素出现的次数"></a>记录元素出现的次数</h3><h4 id="有效的字母异位词"><a href="#有效的字母异位词" class="headerlink" title="有效的字母异位词"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-anagram/description/">有效的字母异位词</a></h4><ol>
+<li>思路：数组做哈希表；加法统计s各字母出现的次数、减法统计t各字母出现的次数，如果最后数组元素不全为0说明构成st的字母不相同</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isAnagram</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> letter[<span class="number">26</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            ++letter[s[i] - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; t.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            --letter[t[i] - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (letter[i] != <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="赎金信"><a href="#赎金信" class="headerlink" title="赎金信"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/ransom-note/description/">赎金信</a></h4><ol>
+<li>思路：加法统计magazine里面字母出现的个数，减法统计ransomNote里面字母出现的个数，如果最终结果出现负数说明magazine无法构成ransomNote</li>
+<li>固定大小的哈希表可以选用数组，数组相对于map来说不用维护红黑树不用做哈希映射，更简单直接</li>
+<li>可以将遍历数组和遍历ransomNote结合起来，因为只要出现了一个负数，程序就可以返回结果了</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">canConstruct</span><span class="params">(string ransomNote, string magazine)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> letter[<span class="number">26</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        <span class="keyword">if</span> (magazine.<span class="built_in">size</span>() &lt; ransomNote.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//剪枝</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;mag : magazine) &#123;</span><br><span class="line">            ++letter[mag - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;ran : ransomNote) &#123;</span><br><span class="line">            --letter[ran - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">            <span class="keyword">if</span> (letter[ran - <span class="string">&#x27;a&#x27;</span>] &lt; <span class="number">0</span>) &#123; <span class="comment">//这里直接判断就好, 只要有负数就可以退出了</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="四数相加Ⅱ"><a href="#四数相加Ⅱ" class="headerlink" title="四数相加Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/4sum-ii/">四数相加Ⅱ</a></h4><ol>
+<li>思路：数组之间是固定的，所以可以把ABCD四数相加拆成两两相加比较结果(A+B&#x3D;-C-D)，最终看等号两边匹配成功的次数</li>
+<li>哈希表的选择：因为find只会找一次，如果使用multiset的话虽然可以记录重复的两元素和，但是find只会匹配一次，后面就算有重复的值也不会被记录；所以这题需要用unordered_map去记录元素和+出现次数；使用find一次匹配就把组合数给统计完全</li>
+<li>取负数的逻辑可以用0-，看起来比x(-1)更直观</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">fourSumCount</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums1, vector&lt;<span class="type">int</span>&gt;&amp; nums2, vector&lt;<span class="type">int</span>&gt;&amp; nums3, vector&lt;<span class="type">int</span>&gt;&amp; nums4)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; umap; <span class="comment">//元素和+出现次数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="type">int</span> &amp;num1 : nums1) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">const</span> <span class="type">int</span> &amp;num2 : nums2) &#123;</span><br><span class="line">                ++umap[num1 + num2];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="type">int</span> &amp;num3 : nums3) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">const</span> <span class="type">int</span> &amp;num4 : nums4) &#123;</span><br><span class="line">                <span class="keyword">if</span> (umap.<span class="built_in">find</span>(<span class="number">0</span> - (num3 + num4)) != umap.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                    count += umap[<span class="number">0</span> - (num3 + num4)];</span><br><span class="line">                &#125; </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/13/String/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -178,10 +291,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-11-13 09:46:00 / Modified: 10:00:29" itemprop="dateCreated datePublished" datetime="2024-11-13T09:46:00+08:00">2024-11-13</time>
+              <time title="Created: 2024-11-13 09:46:00" itemprop="dateCreated datePublished" datetime="2024-11-13T09:46:00+08:00">2024-11-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-14 10:08:28" itemprop="dateModified" datetime="2024-11-14T10:08:28+08:00">2024-11-14</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -310,10 +429,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-11-10 09:50:36 / Modified: 10:00:34" itemprop="dateCreated datePublished" datetime="2024-11-10T09:50:36+08:00">2024-11-10</time>
+              <time title="Created: 2024-11-10 09:50:36" itemprop="dateCreated datePublished" datetime="2024-11-10T09:50:36+08:00">2024-11-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-14 10:08:23" itemprop="dateModified" datetime="2024-11-14T10:08:23+08:00">2024-11-14</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -429,10 +554,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-11-08 14:15:32 / Modified: 14:23:50" itemprop="dateCreated datePublished" datetime="2024-11-08T14:15:32+08:00">2024-11-08</time>
+              <time title="Created: 2024-11-08 14:15:32" itemprop="dateCreated datePublished" datetime="2024-11-08T14:15:32+08:00">2024-11-08</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-14 10:08:36" itemprop="dateModified" datetime="2024-11-14T10:08:36+08:00">2024-11-14</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -557,7 +688,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-11-10 10:00:46" itemprop="dateModified" datetime="2024-11-10T10:00:46+08:00">2024-11-10</time>
+                <time title="Modified: 2024-11-14 10:08:25" itemprop="dateModified" datetime="2024-11-14T10:08:25+08:00">2024-11-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -852,7 +983,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-11-10 10:00:52" itemprop="dateModified" datetime="2024-11-10T10:00:52+08:00">2024-11-10</time>
+                <time title="Modified: 2024-11-14 10:08:19" itemprop="dateModified" datetime="2024-11-14T10:08:19+08:00">2024-11-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1308,7 +1439,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1321,7 +1452,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
