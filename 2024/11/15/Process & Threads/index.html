@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="进程、线程基础知识进程基础知识什么是进程？ 可执行程序被装载到内存中运行，CPU执行其中每一条指令的过程叫做进程 对于一个支持多进程的系统来说, CPU会为每个进程分配时间片, 时间(一般是几十ms或几百ms)到了以后会自动切换其他进程并执行; 在任一瞬间, CPU都只能执行一个进程, 但是在一秒钟来看, CPU执行了多个进程, 这个就叫做并发. 并行和并发不一样; 并发是CPU不断切换进程, 并">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Computer System | Process &amp; Threads">
+<meta property="og:url" content="http://example.com/2024/11/15/Process%20&%20Threads/index.html">
+<meta property="og:site_name" content="Make it right.">
+<meta property="og:description" content="进程、线程基础知识进程基础知识什么是进程？ 可执行程序被装载到内存中运行，CPU执行其中每一条指令的过程叫做进程 对于一个支持多进程的系统来说, CPU会为每个进程分配时间片, 时间(一般是几十ms或几百ms)到了以后会自动切换其他进程并执行; 在任一瞬间, CPU都只能执行一个进程, 但是在一秒钟来看, CPU执行了多个进程, 这个就叫做并发. 并行和并发不一样; 并发是CPU不断切换进程, 并">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/processManagement/process_management_1.png">
+<meta property="og:image" content="http://example.com/images/processManagement/process_management_2.png">
+<meta property="og:image" content="http://example.com/images/processManagement/process_management_3.png">
+<meta property="og:image" content="http://example.com/images/processManagement/process_management_3.png">
+<meta property="og:image" content="http://example.com/images/processManagement/process_management_4.png">
+<meta property="og:image" content="http://example.com/images/processManagement/process_management_5.png">
+<meta property="article:published_time" content="2024-11-15T07:11:13.000Z">
+<meta property="article:modified_time" content="2024-11-15T07:48:33.387Z">
+<meta property="article:author" content="Make1tRight">
+<meta property="article:tag" content="xiaolin coding">
+<meta property="article:tag" content="computer system">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/processManagement/process_management_1.png">
+
+<link rel="canonical" href="http://example.com/2024/11/15/Process%20&%20Threads/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Computer System | Process & Threads | Make it right.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Make it right.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/Process%20&%20Threads/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Computer System | Process & Threads
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-15 15:11:13 / Modified: 15:48:33" itemprop="dateCreated datePublished" datetime="2024-11-15T15:11:13+08:00">2024-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="进程、线程基础知识"><a href="#进程、线程基础知识" class="headerlink" title="进程、线程基础知识"></a>进程、线程基础知识</h2><h3 id="进程基础知识"><a href="#进程基础知识" class="headerlink" title="进程基础知识"></a>进程基础知识</h3><h4 id="什么是进程？"><a href="#什么是进程？" class="headerlink" title="什么是进程？"></a>什么是进程？</h4><ol>
+<li>可执行程序被装载到内存中运行，CPU执行其中每一条指令的过程叫做进程</li>
+<li>对于一个支持多进程的系统来说, CPU会为每个进程分配时间片, 时间(一般是几十ms或几百ms)到了以后会自动切换其他进程并执行; 在任一瞬间, CPU都只能执行一个进程, 但是在一秒钟来看, CPU执行了多个进程, 这个就叫做并发.<br><img src="/../images/processManagement/process_management_1.png" alt="process_management_1"></li>
+<li>并行和并发不一样; 并发是CPU不断切换进程, 并行是不同的核同时执行不同的任务</li>
+<li>CPU可以在不同进程之间切换, 但是在切换之前要记录当前执行程序的状态信息, 否则下一次切回到这个进程都不知道工作到哪里了; 进程有执行-&gt; 暂停 -&gt; 执行的规律</li>
+</ol>
+<h4 id="进程的状态"><a href="#进程的状态" class="headerlink" title="进程的状态"></a>进程的状态</h4><ol>
+<li>基本状态是创建和结束这两个状态; 因为CPU执行进程的特点, 进程还有运行状态、就绪状态、阻塞状态<br><img src="/../images/processManagement/process_management_2.png" alt="process_management_2"></li>
+<li>进程处于阻塞状态的时候，进程没有发挥作用还占用了物理内存空间；因为内存空间是十分宝贵的，如果有大量的进程处于阻塞状态，会占用大量的内存；<ol>
+<li>这时我们可以把阻塞的进程保存到磁盘当中去</li>
+<li>在进程就绪并且被调度执行的时候再还原到内存中去</li>
+<li>处于磁盘中的进程有就绪挂起和阻塞挂起两个状态；Ctrl+Z, 挂起的<br> <img src="/../images/processManagement/process_management_3.png" alt="process_management_3"></li>
+</ol>
+</li>
+</ol>
+<h4 id="进程的控制结构"><a href="#进程的控制结构" class="headerlink" title="进程的控制结构"></a>进程的控制结构</h4><ol>
+<li>操作系统中，用进程控制块（process control block，PCB）来描述进程；PCB是进程存在的唯一标识，如果进程存在，就会有一个PCB；如果进程消失，PCB也消失</li>
+<li>PCB包含的信息<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程描述信息</td>
+<td>标识进程和进程归属用户</td>
+</tr>
+<tr>
+<td>进程控制和管理信息</td>
+<td>标识进程运行的状态和进程运行的优先级</td>
+</tr>
+<tr>
+<td>资源分配清单</td>
+<td>标识内存地址空间或虚拟内存空间的信息（打开的文件列表和所使用的IO设备信息）</td>
+</tr>
+<tr>
+<td>CPU相关信息</td>
+<td>CPU中各寄存器的值，保证还原的时候能够从断点继续执行</td>
+</tr>
+</tbody></table>
+</li>
+<li>因为进程的创建和销毁经常发生，为了更方便插入和删除节点，PCB一般使用链表进行组织，状态为就绪的进程归到一类 -&gt; 就绪队列；状态为阻塞的进程归到一类 -&gt; 阻塞队列;  除了链表还有索引表的形式, 将不同状态的进程加入到不同索引表中, 索引表中每行指向相应的PCB</li>
+</ol>
+<h4 id="进程的控制"><a href="#进程的控制" class="headerlink" title="进程的控制"></a>进程的控制</h4><table>
+<thead>
+<tr>
+<th>创建进程</th>
+<th>终止进程</th>
+<th>阻塞进程</th>
+<th>唤醒进程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>申请空白PCB, 向PCB中填写进程相关信息</td>
+<td>查找要终止的进程</td>
+<td>找到要阻塞的进程</td>
+<td>在阻塞队列中找到要唤醒进程的PCB</td>
+</tr>
+<tr>
+<td>为进程分配运行必需资源, 比如内存资源</td>
+<td>如果进程处于执行状态, 终止进程执行, 将CPU资源分配给其他进程</td>
+<td>如果要阻塞的进程处于执行状态, 保护现场后将进程设置为阻塞状态, 并停止进程运行</td>
+<td>将PCB从阻塞队列中移除, 并将进程设置为就绪状态</td>
+</tr>
+<tr>
+<td>将PCB加入到就绪队列</td>
+<td>如果要终止的进程有子进程, 将子进程交给1号进程进行管理</td>
+<td>将PCB加入到阻塞队列</td>
+<td>将PCB加入到就绪队列, 等待调度程序调度</td>
+</tr>
+<tr>
+<td></td>
+<td>将进程的资源归还操作系统</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>将PCB从所在队列中删除</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>进程可以创建子进程</td>
+<td>有正常结束、异常结束以及外界干预三种终止方式</td>
+<td>阻塞的进程只能由其他进程唤醒</td>
+<td>只有该进程期待的事情出现,才由发现者进程唤醒</td>
+</tr>
+</tbody></table>
+<h4 id="进程的上下文切换"><a href="#进程的上下文切换" class="headerlink" title="进程的上下文切换"></a>进程的上下文切换</h4><ol>
+<li>一个进程切换到另一个进程就叫做进程的上下文切换, 但是在切换之前要保护现场</li>
+<li>对于CPU的上下文切换, 为了让CPU能够继续执行之前未执行完毕的任务, 需要保存<strong>CPU寄存器和程序计数器</strong>这两个信息, 他们是CPU在执行任何任务必须依赖的环境, 即CPU上下文；CPU所执行的任务包括进程、线程和中断三种，根据任务的不同，CPU的上下文切换可以分为进程的上下文切换、线程的上下文切换和中断的上下文切换</li>
+<li>进程上下文切换的内容<br><img src="/../images/processManagement/process_management_3.png" alt="process_management_3"><table>
+<thead>
+<tr>
+<th>内核空间（进程由内核调度、管理，进程的切换只发生在内核态）</th>
+<th>用户空间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内核堆栈</td>
+<td>虚拟内存</td>
+</tr>
+<tr>
+<td>寄存器</td>
+<td>栈</td>
+</tr>
+<tr>
+<td></td>
+<td>全局变量</td>
+</tr>
+<tr>
+<td>上下文切换过程中，信息会被保存到PCB中；要保存的信息越少，上下文切换的开销越小，程序执行效率越高</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li>发生进程上下文切换的场景<ol>
+<li>系统资源不足，进程被挂起</li>
+<li>有硬件中断，CPU进程被中断挂起，先去执行中断</li>
+<li>当前进程时间片耗尽，从执行状态转到就绪状态</li>
+<li>通过睡眠函数sleep()将自己主动挂起</li>
+<li>有更高优先级的进程需要被执行的时候，当前进程被挂起</li>
+</ol>
+</li>
+</ol>
+<h3 id="线程基础知识"><a href="#线程基础知识" class="headerlink" title="线程基础知识"></a>线程基础知识</h3><h4 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h4><ol>
+<li>进程虽然可以让CPU同时完成不同的任务，但是每次切换进程的时候，因为每个进程依赖的环境都不一样，所以每次都需要进行上下文切换；线程就是想让CPU既能够完成不同的任务（即实体之间并发运行），又让实体之间能够共享相同的地址空间</li>
+<li>线程是进程当中的一条执行流程<br><img src="/../images/processManagement/process_management_4.png" alt="process_management_4"></li>
+<li>C&#x2F;C++里面，一个线程崩溃会导致相同进程的其他线程也崩溃，所以做游戏不能用多线程</li>
+</ol>
+<h4 id="线程与进程的比较"><a href="#线程与进程的比较" class="headerlink" title="线程与进程的比较"></a>线程与进程的比较</h4><p>线程创建和终止的开销都比进程小，因为不用分配或释放地址空间、文件等资源</p>
+<table>
+<thead>
+<tr>
+<th>进程</th>
+<th>线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>资源分配的最小单位</td>
+<td>CPU调度的最小单位</td>
+</tr>
+<tr>
+<td>拥有完整的资源平台</td>
+<td>共享地址空间和文件，独享栈和寄存器</td>
+</tr>
+<tr>
+<td>有就绪、阻塞、执行三种状态</td>
+<td>有就绪、阻塞、执行三种状态</td>
+</tr>
+<tr>
+<td>切换进程要切换页表</td>
+<td>切换线程不用切换页表</td>
+</tr>
+</tbody></table>
+<h4 id="线程的上下文切换"><a href="#线程的上下文切换" class="headerlink" title="线程的上下文切换"></a>线程的上下文切换</h4><ol>
+<li>操作系统在进行任务调度的过程中，调度的对象实际上是线程</li>
+<li>如果是不同进程之间的线程进行上下文切换，那切换线程和切换进程是一样的</li>
+<li>如果是相同进程之间的线程进行上下文切换，因为地址空间、文件、虚拟内存等资源是共享的，所以只需要切换寄存器和栈等线程独享资源即可</li>
+</ol>
+<h4 id="线程的实现"><a href="#线程的实现" class="headerlink" title="线程的实现"></a>线程的实现</h4><ol>
+<li>在用户空间实现的线程是用户线程；在内核空间实现的线程由内核管理，是内核线程；用户线程和内核线程有多对一、一对一、多对多的关系</li>
+<li>用户线程基于用户态的线程管理库来实现，（多用户线程对一内核线程）<ol>
+<li>对应的线程控制块（Thread Control Block）也由线程管理库来实现（我理解的TCB实现了对PCB更细粒度的管理），TCB保存各个线程的状态信息，包括PC、栈指针、寄存器</li>
+<li>操作系统不直接参与用户线程的管理，由线程管理库完成对线程的创建、终止、同步和调度管理操作<table>
+<thead>
+<tr>
+<th>用户线程的优点</th>
+<th>用户线程的缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>切换由线程库函数自己完成，在用户态就能完成，因此不需要在用户态和内核态进行切换，速度特别快</td>
+<td>用户线程在执行过程中不能被中断，只有操作系统才有打断线程执行的特权</td>
+</tr>
+<tr>
+<td>TCB由用户级线程管理库来实现，可用于不支持线程技术的操作系统</td>
+<td>因为操作系统不参与用户线程的管理，如果线程发起系统调用而被阻塞，同一进程下的其他线程也都无法运行</td>
+</tr>
+<tr>
+<td></td>
+<td>时间片是分配给进程的，所以线程得到的时间片更少，执行速度更慢</td>
+</tr>
+</tbody></table>
+</li>
+<li>内核线程由操作系统管理，线程的创建、终止、同步和调度管理操作由操作系统完成（一用户线程对一内核线程）<table>
+<thead>
+<tr>
+<th>内核线程的优点</th>
+<th>内核线程的缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一个内核线程发起系统调用被阻塞，其他内核线程不会受影响</td>
+<td>内核来维护PCB和TCB</td>
+</tr>
+<tr>
+<td>分配的CPU运行时间更多</td>
+<td>线程的创建、终止、同步和调度管理操作通过系统调用来完成，开销更大</td>
+</tr>
+</tbody></table>
+</li>
+<li>轻量级线程Light-Weight Process是由内核支持的用户线程</li>
+</ol>
+</li>
+</ol>
+<h3 id="调度"><a href="#调度" class="headerlink" title="调度"></a>调度</h3><p>调度程序的功能就是选择一个进程来运行，由操作系统来完成；调度就是进程从一个状态切换到另一个状态</p>
+<h4 id="调度时机"><a href="#调度时机" class="headerlink" title="调度时机"></a>调度时机</h4><ol>
+<li>调度算法根据处理时钟中断的机制分为非抢占式调度算法和抢占式调度算法<ol>
+<li>非抢占式调度算法，不理会时钟中断，当前进程执行完毕，或者当前进程退出以后才去执行下一进程</li>
+<li>抢占式调度算法，也就是时间片机制，分配给进程的时间片用完以后触发时钟中断，将CPU控制返回给调度程序进行调度</li>
+</ol>
+</li>
+</ol>
+<h4 id="调度原则-让进程更快完成"><a href="#调度原则-让进程更快完成" class="headerlink" title="调度原则 - 让进程更快完成"></a>调度原则 - 让进程更快完成</h4><ol>
+<li>CPU利用率要高，当发生IO事件请求的时候就必须从就绪队列中取出进程来运行</li>
+<li>系统吞吐量，就是单位时间内CPU完成进程的数量，系统的吞吐量越高越好</li>
+<li>周转时间包括进程运行时间+进程等待时间，一个进程的周转时间越小越好</li>
+<li>等待时间，进程在就绪队列中的时间</li>
+<li>响应时间，从用户发出请求到系统第一次产生响应的时间；在交互式系统中，响应时间是衡量调度算法好坏的标准</li>
+</ol>
+<h4 id="调度算法-单核CPU"><a href="#调度算法-单核CPU" class="headerlink" title="调度算法(单核CPU)"></a>调度算法(单核CPU)</h4><ol>
+<li>先来先服务FCFS调度算法，按进程在就绪队列中的顺序一个一个执行；非抢占式，当一个长作业先运行，后面的短作业也必须等待</li>
+<li>对短作业优先Shortest Job First调度算法，优先选择运行时间最短的进程来运行；对长作业不利，短作业一直处于优先地位，长作业只能一直等待，会导致周转时间变长</li>
+<li>高响应比优先Highest Response Ratio Next调度算法，$$优先权&#x3D;\frac{等待时间+要求服务时间}{要求服务时间}$$，要求服务时间不可预估，不能实现</li>
+<li>时间片轮转Round Robin调度算法，时间片就是时间段；时间片用完了进程还在执行 -&gt; 把进程从CPU释放出来，分配给其他进程；时间片没用完但是进程结束或被阻塞 -&gt; CPU立即切换；一般来说时间片的长度是20ms ~ 50ms</li>
+<li>最高优先级HPF调度算法，调度程序在就绪队列中选择优先级高的进程优先运行；<ol>
+<li>优先级有动态和静态优先级两种，<ol>
+<li>静态优先级是在创建进程的时候就固定好优先级后面不会改变</li>
+<li>动态优先级是等待时间长的进程优先级变高、运行时间长的进程优先级降低</li>
+</ol>
+</li>
+<li>这个调度算法有抢占式和非抢占式两种<ol>
+<li>非抢占式，当前进程执行完以后，在就绪队列中选择优先级高的进程优先运行</li>
+<li>抢占式，有优先级高的进程直接挂起当前进程，调度优先级高的进程运行</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>多级反馈队列Multilevel Feedback Queue调度算法, RR+HPF, 多级就是有多个队列，每个队列的优先级从高到低、反馈就是如果有新的进程加入到更高优先级队列时，挂起当前进程去执行更高优先级队列中的进程<br> <img src="/../images/processManagement/process_management_5.png" alt="process_management_5"><ol>
+<li>优先级越高的队列中，进程分配到的时间片越短</li>
+<li>新的进程都被放到第一优先级的队列中，如果在对应时间片内没有执行完，加入到下一优先级队列中去</li>
+<li>兼顾了长短作业，同时响应时间也保证了，因为每个进程一开始都是加在最高优先级队列的，很快就能被响应，搞不定再降级</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/xiaolin-coding/" rel="tag"># xiaolin coding</a>
+              <a href="/tags/computer-system/" rel="tag"># computer system</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/15/I-O-multiplexing-technology/" rel="prev" title="Computer System | I/O multiplexing technology">
+      <i class="fa fa-chevron-left"></i> Computer System | I/O multiplexing technology
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">进程、线程基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">进程基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%9B%E7%A8%8B%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是进程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">进程的状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">进程的控制结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%8E%A7%E5%88%B6"><span class="nav-number">1.1.4.</span> <span class="nav-text">进程的控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.1.5.</span> <span class="nav-text">进程的上下文切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.2.</span> <span class="nav-text">线程基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是线程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.2.</span> <span class="nav-text">线程与进程的比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.2.3.</span> <span class="nav-text">线程的上下文切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.4.</span> <span class="nav-text">线程的实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">调度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E6%97%B6%E6%9C%BA"><span class="nav-number">1.3.1.</span> <span class="nav-text">调度时机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E5%8E%9F%E5%88%99-%E8%AE%A9%E8%BF%9B%E7%A8%8B%E6%9B%B4%E5%BF%AB%E5%AE%8C%E6%88%90"><span class="nav-number">1.3.2.</span> <span class="nav-text">调度原则 - 让进程更快完成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-%E5%8D%95%E6%A0%B8CPU"><span class="nav-number">1.3.3.</span> <span class="nav-text">调度算法(单核CPU)</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Make1tRight"
+      src="/uploads/xiaoxin.jpg">
+  <p class="site-author-name" itemprop="name">Make1tRight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/make1tRight" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;make1tRight" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xliang9809@163.com" title="E-Mail → mailto:xliang9809@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Make1tRight</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

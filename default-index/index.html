@@ -155,6 +155,675 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/Process%20&%20Threads/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/15/Process%20&%20Threads/" class="post-title-link" itemprop="url">Computer System | Process & Threads</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-15 15:11:13 / Modified: 15:48:33" itemprop="dateCreated datePublished" datetime="2024-11-15T15:11:13+08:00">2024-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="进程、线程基础知识"><a href="#进程、线程基础知识" class="headerlink" title="进程、线程基础知识"></a>进程、线程基础知识</h2><h3 id="进程基础知识"><a href="#进程基础知识" class="headerlink" title="进程基础知识"></a>进程基础知识</h3><h4 id="什么是进程？"><a href="#什么是进程？" class="headerlink" title="什么是进程？"></a>什么是进程？</h4><ol>
+<li>可执行程序被装载到内存中运行，CPU执行其中每一条指令的过程叫做进程</li>
+<li>对于一个支持多进程的系统来说, CPU会为每个进程分配时间片, 时间(一般是几十ms或几百ms)到了以后会自动切换其他进程并执行; 在任一瞬间, CPU都只能执行一个进程, 但是在一秒钟来看, CPU执行了多个进程, 这个就叫做并发.<br><img src="/../images/processManagement/process_management_1.png" alt="process_management_1"></li>
+<li>并行和并发不一样; 并发是CPU不断切换进程, 并行是不同的核同时执行不同的任务</li>
+<li>CPU可以在不同进程之间切换, 但是在切换之前要记录当前执行程序的状态信息, 否则下一次切回到这个进程都不知道工作到哪里了; 进程有执行-&gt; 暂停 -&gt; 执行的规律</li>
+</ol>
+<h4 id="进程的状态"><a href="#进程的状态" class="headerlink" title="进程的状态"></a>进程的状态</h4><ol>
+<li>基本状态是创建和结束这两个状态; 因为CPU执行进程的特点, 进程还有运行状态、就绪状态、阻塞状态<br><img src="/../images/processManagement/process_management_2.png" alt="process_management_2"></li>
+<li>进程处于阻塞状态的时候，进程没有发挥作用还占用了物理内存空间；因为内存空间是十分宝贵的，如果有大量的进程处于阻塞状态，会占用大量的内存；<ol>
+<li>这时我们可以把阻塞的进程保存到磁盘当中去</li>
+<li>在进程就绪并且被调度执行的时候再还原到内存中去</li>
+<li>处于磁盘中的进程有就绪挂起和阻塞挂起两个状态；Ctrl+Z, 挂起的<br> <img src="/../images/processManagement/process_management_3.png" alt="process_management_3"></li>
+</ol>
+</li>
+</ol>
+<h4 id="进程的控制结构"><a href="#进程的控制结构" class="headerlink" title="进程的控制结构"></a>进程的控制结构</h4><ol>
+<li>操作系统中，用进程控制块（process control block，PCB）来描述进程；PCB是进程存在的唯一标识，如果进程存在，就会有一个PCB；如果进程消失，PCB也消失</li>
+<li>PCB包含的信息<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程描述信息</td>
+<td>标识进程和进程归属用户</td>
+</tr>
+<tr>
+<td>进程控制和管理信息</td>
+<td>标识进程运行的状态和进程运行的优先级</td>
+</tr>
+<tr>
+<td>资源分配清单</td>
+<td>标识内存地址空间或虚拟内存空间的信息（打开的文件列表和所使用的IO设备信息）</td>
+</tr>
+<tr>
+<td>CPU相关信息</td>
+<td>CPU中各寄存器的值，保证还原的时候能够从断点继续执行</td>
+</tr>
+</tbody></table>
+</li>
+<li>因为进程的创建和销毁经常发生，为了更方便插入和删除节点，PCB一般使用链表进行组织，状态为就绪的进程归到一类 -&gt; 就绪队列；状态为阻塞的进程归到一类 -&gt; 阻塞队列;  除了链表还有索引表的形式, 将不同状态的进程加入到不同索引表中, 索引表中每行指向相应的PCB</li>
+</ol>
+<h4 id="进程的控制"><a href="#进程的控制" class="headerlink" title="进程的控制"></a>进程的控制</h4><table>
+<thead>
+<tr>
+<th>创建进程</th>
+<th>终止进程</th>
+<th>阻塞进程</th>
+<th>唤醒进程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>申请空白PCB, 向PCB中填写进程相关信息</td>
+<td>查找要终止的进程</td>
+<td>找到要阻塞的进程</td>
+<td>在阻塞队列中找到要唤醒进程的PCB</td>
+</tr>
+<tr>
+<td>为进程分配运行必需资源, 比如内存资源</td>
+<td>如果进程处于执行状态, 终止进程执行, 将CPU资源分配给其他进程</td>
+<td>如果要阻塞的进程处于执行状态, 保护现场后将进程设置为阻塞状态, 并停止进程运行</td>
+<td>将PCB从阻塞队列中移除, 并将进程设置为就绪状态</td>
+</tr>
+<tr>
+<td>将PCB加入到就绪队列</td>
+<td>如果要终止的进程有子进程, 将子进程交给1号进程进行管理</td>
+<td>将PCB加入到阻塞队列</td>
+<td>将PCB加入到就绪队列, 等待调度程序调度</td>
+</tr>
+<tr>
+<td></td>
+<td>将进程的资源归还操作系统</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>将PCB从所在队列中删除</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>进程可以创建子进程</td>
+<td>有正常结束、异常结束以及外界干预三种终止方式</td>
+<td>阻塞的进程只能由其他进程唤醒</td>
+<td>只有该进程期待的事情出现,才由发现者进程唤醒</td>
+</tr>
+</tbody></table>
+<h4 id="进程的上下文切换"><a href="#进程的上下文切换" class="headerlink" title="进程的上下文切换"></a>进程的上下文切换</h4><ol>
+<li>一个进程切换到另一个进程就叫做进程的上下文切换, 但是在切换之前要保护现场</li>
+<li>对于CPU的上下文切换, 为了让CPU能够继续执行之前未执行完毕的任务, 需要保存<strong>CPU寄存器和程序计数器</strong>这两个信息, 他们是CPU在执行任何任务必须依赖的环境, 即CPU上下文；CPU所执行的任务包括进程、线程和中断三种，根据任务的不同，CPU的上下文切换可以分为进程的上下文切换、线程的上下文切换和中断的上下文切换</li>
+<li>进程上下文切换的内容<br><img src="/../images/processManagement/process_management_3.png" alt="process_management_3"><table>
+<thead>
+<tr>
+<th>内核空间（进程由内核调度、管理，进程的切换只发生在内核态）</th>
+<th>用户空间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内核堆栈</td>
+<td>虚拟内存</td>
+</tr>
+<tr>
+<td>寄存器</td>
+<td>栈</td>
+</tr>
+<tr>
+<td></td>
+<td>全局变量</td>
+</tr>
+<tr>
+<td>上下文切换过程中，信息会被保存到PCB中；要保存的信息越少，上下文切换的开销越小，程序执行效率越高</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li>发生进程上下文切换的场景<ol>
+<li>系统资源不足，进程被挂起</li>
+<li>有硬件中断，CPU进程被中断挂起，先去执行中断</li>
+<li>当前进程时间片耗尽，从执行状态转到就绪状态</li>
+<li>通过睡眠函数sleep()将自己主动挂起</li>
+<li>有更高优先级的进程需要被执行的时候，当前进程被挂起</li>
+</ol>
+</li>
+</ol>
+<h3 id="线程基础知识"><a href="#线程基础知识" class="headerlink" title="线程基础知识"></a>线程基础知识</h3><h4 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h4><ol>
+<li>进程虽然可以让CPU同时完成不同的任务，但是每次切换进程的时候，因为每个进程依赖的环境都不一样，所以每次都需要进行上下文切换；线程就是想让CPU既能够完成不同的任务（即实体之间并发运行），又让实体之间能够共享相同的地址空间</li>
+<li>线程是进程当中的一条执行流程<br><img src="/../images/processManagement/process_management_4.png" alt="process_management_4"></li>
+<li>C&#x2F;C++里面，一个线程崩溃会导致相同进程的其他线程也崩溃，所以做游戏不能用多线程</li>
+</ol>
+<h4 id="线程与进程的比较"><a href="#线程与进程的比较" class="headerlink" title="线程与进程的比较"></a>线程与进程的比较</h4><p>线程创建和终止的开销都比进程小，因为不用分配或释放地址空间、文件等资源</p>
+<table>
+<thead>
+<tr>
+<th>进程</th>
+<th>线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>资源分配的最小单位</td>
+<td>CPU调度的最小单位</td>
+</tr>
+<tr>
+<td>拥有完整的资源平台</td>
+<td>共享地址空间和文件，独享栈和寄存器</td>
+</tr>
+<tr>
+<td>有就绪、阻塞、执行三种状态</td>
+<td>有就绪、阻塞、执行三种状态</td>
+</tr>
+<tr>
+<td>切换进程要切换页表</td>
+<td>切换线程不用切换页表</td>
+</tr>
+</tbody></table>
+<h4 id="线程的上下文切换"><a href="#线程的上下文切换" class="headerlink" title="线程的上下文切换"></a>线程的上下文切换</h4><ol>
+<li>操作系统在进行任务调度的过程中，调度的对象实际上是线程</li>
+<li>如果是不同进程之间的线程进行上下文切换，那切换线程和切换进程是一样的</li>
+<li>如果是相同进程之间的线程进行上下文切换，因为地址空间、文件、虚拟内存等资源是共享的，所以只需要切换寄存器和栈等线程独享资源即可</li>
+</ol>
+<h4 id="线程的实现"><a href="#线程的实现" class="headerlink" title="线程的实现"></a>线程的实现</h4><ol>
+<li>在用户空间实现的线程是用户线程；在内核空间实现的线程由内核管理，是内核线程；用户线程和内核线程有多对一、一对一、多对多的关系</li>
+<li>用户线程基于用户态的线程管理库来实现，（多用户线程对一内核线程）<ol>
+<li>对应的线程控制块（Thread Control Block）也由线程管理库来实现（我理解的TCB实现了对PCB更细粒度的管理），TCB保存各个线程的状态信息，包括PC、栈指针、寄存器</li>
+<li>操作系统不直接参与用户线程的管理，由线程管理库完成对线程的创建、终止、同步和调度管理操作<table>
+<thead>
+<tr>
+<th>用户线程的优点</th>
+<th>用户线程的缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>切换由线程库函数自己完成，在用户态就能完成，因此不需要在用户态和内核态进行切换，速度特别快</td>
+<td>用户线程在执行过程中不能被中断，只有操作系统才有打断线程执行的特权</td>
+</tr>
+<tr>
+<td>TCB由用户级线程管理库来实现，可用于不支持线程技术的操作系统</td>
+<td>因为操作系统不参与用户线程的管理，如果线程发起系统调用而被阻塞，同一进程下的其他线程也都无法运行</td>
+</tr>
+<tr>
+<td></td>
+<td>时间片是分配给进程的，所以线程得到的时间片更少，执行速度更慢</td>
+</tr>
+</tbody></table>
+</li>
+<li>内核线程由操作系统管理，线程的创建、终止、同步和调度管理操作由操作系统完成（一用户线程对一内核线程）<table>
+<thead>
+<tr>
+<th>内核线程的优点</th>
+<th>内核线程的缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一个内核线程发起系统调用被阻塞，其他内核线程不会受影响</td>
+<td>内核来维护PCB和TCB</td>
+</tr>
+<tr>
+<td>分配的CPU运行时间更多</td>
+<td>线程的创建、终止、同步和调度管理操作通过系统调用来完成，开销更大</td>
+</tr>
+</tbody></table>
+</li>
+<li>轻量级线程Light-Weight Process是由内核支持的用户线程</li>
+</ol>
+</li>
+</ol>
+<h3 id="调度"><a href="#调度" class="headerlink" title="调度"></a>调度</h3><p>调度程序的功能就是选择一个进程来运行，由操作系统来完成；调度就是进程从一个状态切换到另一个状态</p>
+<h4 id="调度时机"><a href="#调度时机" class="headerlink" title="调度时机"></a>调度时机</h4><ol>
+<li>调度算法根据处理时钟中断的机制分为非抢占式调度算法和抢占式调度算法<ol>
+<li>非抢占式调度算法，不理会时钟中断，当前进程执行完毕，或者当前进程退出以后才去执行下一进程</li>
+<li>抢占式调度算法，也就是时间片机制，分配给进程的时间片用完以后触发时钟中断，将CPU控制返回给调度程序进行调度</li>
+</ol>
+</li>
+</ol>
+<h4 id="调度原则-让进程更快完成"><a href="#调度原则-让进程更快完成" class="headerlink" title="调度原则 - 让进程更快完成"></a>调度原则 - 让进程更快完成</h4><ol>
+<li>CPU利用率要高，当发生IO事件请求的时候就必须从就绪队列中取出进程来运行</li>
+<li>系统吞吐量，就是单位时间内CPU完成进程的数量，系统的吞吐量越高越好</li>
+<li>周转时间包括进程运行时间+进程等待时间，一个进程的周转时间越小越好</li>
+<li>等待时间，进程在就绪队列中的时间</li>
+<li>响应时间，从用户发出请求到系统第一次产生响应的时间；在交互式系统中，响应时间是衡量调度算法好坏的标准</li>
+</ol>
+<h4 id="调度算法-单核CPU"><a href="#调度算法-单核CPU" class="headerlink" title="调度算法(单核CPU)"></a>调度算法(单核CPU)</h4><ol>
+<li>先来先服务FCFS调度算法，按进程在就绪队列中的顺序一个一个执行；非抢占式，当一个长作业先运行，后面的短作业也必须等待</li>
+<li>对短作业优先Shortest Job First调度算法，优先选择运行时间最短的进程来运行；对长作业不利，短作业一直处于优先地位，长作业只能一直等待，会导致周转时间变长</li>
+<li>高响应比优先Highest Response Ratio Next调度算法，$$优先权&#x3D;\frac{等待时间+要求服务时间}{要求服务时间}$$，要求服务时间不可预估，不能实现</li>
+<li>时间片轮转Round Robin调度算法，时间片就是时间段；时间片用完了进程还在执行 -&gt; 把进程从CPU释放出来，分配给其他进程；时间片没用完但是进程结束或被阻塞 -&gt; CPU立即切换；一般来说时间片的长度是20ms ~ 50ms</li>
+<li>最高优先级HPF调度算法，调度程序在就绪队列中选择优先级高的进程优先运行；<ol>
+<li>优先级有动态和静态优先级两种，<ol>
+<li>静态优先级是在创建进程的时候就固定好优先级后面不会改变</li>
+<li>动态优先级是等待时间长的进程优先级变高、运行时间长的进程优先级降低</li>
+</ol>
+</li>
+<li>这个调度算法有抢占式和非抢占式两种<ol>
+<li>非抢占式，当前进程执行完以后，在就绪队列中选择优先级高的进程优先运行</li>
+<li>抢占式，有优先级高的进程直接挂起当前进程，调度优先级高的进程运行</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>多级反馈队列Multilevel Feedback Queue调度算法, RR+HPF, 多级就是有多个队列，每个队列的优先级从高到低、反馈就是如果有新的进程加入到更高优先级队列时，挂起当前进程去执行更高优先级队列中的进程<br> <img src="/../images/processManagement/process_management_5.png" alt="process_management_5"><ol>
+<li>优先级越高的队列中，进程分配到的时间片越短</li>
+<li>新的进程都被放到第一优先级的队列中，如果在对应时间片内没有执行完，加入到下一优先级队列中去</li>
+<li>兼顾了长短作业，同时响应时间也保证了，因为每个进程一开始都是加在最高优先级队列的，很快就能被响应，搞不定再降级</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/I-O-multiplexing-technology/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/15/I-O-multiplexing-technology/" class="post-title-link" itemprop="url">Computer System | I/O multiplexing technology</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-15 14:58:49 / Modified: 15:03:50" itemprop="dateCreated datePublished" datetime="2024-11-15T14:58:49+08:00">2024-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="I-O多路复用-select-poll-epoll"><a href="#I-O多路复用-select-poll-epoll" class="headerlink" title="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll"></a>I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</h2><h3 id="最基本的Socket模型"><a href="#最基本的Socket模型" class="headerlink" title="最基本的Socket模型"></a>最基本的Socket模型</h3><ol>
+<li>Socket &#x3D; IP + Port</li>
+<li>服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)</li>
+</ol>
+<h3 id="如何服务更多用户"><a href="#如何服务更多用户" class="headerlink" title="如何服务更多用户?"></a>如何服务更多用户?</h3><ol>
+<li>C10K问题, 就是能否支持并发1万请求</li>
+<li>单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询</span></span><br><span class="line"><span class="built_in">ulimit</span> -n </span><br><span class="line"></span><br><span class="line"><span class="comment"># 设定为m</span></span><br><span class="line"><span class="built_in">ulimit</span> -n m</span><br></pre></td></tr></table></figure>
+
+<h3 id="多进程模型"><a href="#多进程模型" class="headerlink" title="多进程模型"></a>多进程模型</h3><ol>
+<li><p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型</p>
+<table>
+<thead>
+<tr>
+<th>多进程模型(父进程负责监听, 子进程负责处理业务)</th>
+<th>多线程模型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>server在LISTEN状态下, 客户端发起connect</td>
+<td>与多进程模型相同</td>
+</tr>
+<tr>
+<td>服务端accept</td>
+<td>与多进程模型相同</td>
+</tr>
+<tr>
+<td>应用父进程fork一个子进程</td>
+<td>pthread_create()创建新的线程</td>
+</tr>
+<tr>
+<td>子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息)</td>
+<td>在线程中实现与客户端的数据交换</td>
+</tr>
+<tr>
+<td>子进程专门处理数据的读写、父进程继续监听socket</td>
+<td>-</td>
+</tr>
+<tr>
+<td>如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换</td>
+<td>-</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
+</li>
+<li><p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
+</li>
+<li><p>另外，父进程要通过调用wait()&#x2F;pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
+</li>
+</ol>
+<h3 id="多线程模型"><a href="#多线程模型" class="headerlink" title="多线程模型"></a>多线程模型</h3><ol>
+<li>因为多进程模型在使用过程中，进程的上下文切换开销特别大，所以需要更小开销的多线程模型</li>
+<li>多线程模型的优势在于，线程共享进程的代码、全局数据、进程空间、文件描述符列表、堆、共享库等资源  -&gt; 切换线程的时候只需要复制寄存器、线程私有数据等专属资源，开销更小、速度更快</li>
+<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源<ol>
+<li>可以启用线程池，在建立连接之前就将线程创建好</li>
+<li>从全连接队列（ESTABLISHED）中取出全连接对象-&gt;进行数据交换 -&gt; 数据交换结束后也不需要释放对应线程，放回到线程池里即可</li>
+</ol>
+</li>
+</ol>
+<h4 id="I-O多路复用"><a href="#I-O多路复用" class="headerlink" title="I&#x2F;O多路复用"></a>I&#x2F;O多路复用</h4><ol>
+<li>要实现C10K，单纯使用多线程&#x2F;多进程模型意味着需要1w个线程&#x2F;进程，现在自己的电脑也才32线程</li>
+<li>IO多路复用技术类似于CPU的并发技术，对每个socket都分配一个时间片，到期以后切换下一个socket，看起来就像是同时处理了多个socket（也叫时分多路复用技术）</li>
+<li>常见的IO复用技术就是select&#x2F;poll和epoll（看todolist2-day60）<ol>
+<li>select&#x2F;poll都要遍历文件描述符列表去检查哪些socket可读&#x2F;可写；select&#x2F;poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读&#x2F;可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
+<li>epoll维护红黑树[时间复杂度<code>O(logn)</code>]+链表，能够解决C10K问题</li>
+</ol>
+</li>
+<li>边缘触发和水平触发 - select&#x2F;poll只支持LT水平触发，epoll支持LT和ET两种</li>
+</ol>
+<h5 id="Linux下的三种IO复用方式：epoll、select和poll"><a href="#Linux下的三种IO复用方式：epoll、select和poll" class="headerlink" title="Linux下的三种IO复用方式：epoll、select和poll"></a>Linux下的三种IO复用方式：epoll、select和poll</h5><ol>
+<li>select:<ol>
+<li>所有文件描述符在用户态被加入其文件描述符集合，每次调用都需要将整个集合拷贝到内核态</li>
+<li>使用线性表描述文件描述符集合，文件描述符有上限</li>
+<li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
+<li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
+</ol>
+</li>
+<li>poll:<ol>
+<li>所有文件描述符都是在用户态被加入其文件描述符集合的，每次调用都需要将整个集合拷贝到内核态</li>
+<li>使用链表来描述文件描述符集合</li>
+<li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
+<li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
+</ol>
+</li>
+<li>epoll:<ol>
+<li>将整个文件描述符集合维护在内核态，每次添加文件描述符的时候都需要执行一个系统调用(系统调用的开销很大， 因此在有很多短期活跃连接的情况下，epoll可能会慢于select和poll)</li>
+<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可<ol>
+<li>待检测的socket加入到自己维护的红黑树中</li>
+<li>epoll_wait从链表中取出已经就绪的socket</li>
+<li>红黑树的增删改时间复杂度是O(logn)比bitsmap和动态数组的O(n)效率更高</li>
+<li>不用去遍历哪个可读&#x2F;可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
+<li>另外，epoll仍旧需要把数据从内核态拷贝到用户态</li>
+</ol>
+</li>
+<li>不需要遍历整个文件描述符集合，当有活动产生时，会自动触发epoll回调函数通知epoll文件描述符，然后内核将这些就绪的文件描述符放到之前提到的ready list中等待epoll_wait调用后被处理</li>
+<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)<ol>
+<li>LT会去遍历在epoll事件表中每个文件描述符，来观察是否有我们感兴趣的事件发生，如果有（触发了该文件描述符上的回调函数），epoll_wait就会以非阻塞的方式返回。若该epoll事件没有被处理完（没有返回EWOULDBLOCK），该事件还会被后续的epoll_wait再次触发</li>
+<li>ET在发现有我们感兴趣的事件发生后，立即返回，并且sleep这一事件的epoll_wait，不管该事件有没有结束 -&gt; 使用ET模式必须保证fd是非阻塞的，每次调用read和write的时候都必须等到他们返回EWOULDBLOCK</li>
+</ol>
+</li>
+<li>监测的fd数量较小，且各个fd都很活跃的情况下，建议使用select和poll，当监听的fd数量较多，且单位时间仅部分fd活跃的情况下，使用epoll会明显提升性能</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/zero_copy_technology/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/15/zero_copy_technology/" class="post-title-link" itemprop="url">Computer System | What is zero copy technology?</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-15 13:38:47 / Modified: 14:59:35" itemprop="dateCreated datePublished" datetime="2024-11-15T13:38:47+08:00">2024-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="什么是零拷贝技术？"><a href="#什么是零拷贝技术？" class="headerlink" title="什么是零拷贝技术？"></a>什么是零拷贝技术？</h2><h3 id="为什么要有DMA技术"><a href="#为什么要有DMA技术" class="headerlink" title="为什么要有DMA技术?"></a>为什么要有DMA技术?</h3><p><img src="/../images/networkSystem/network_system_1.png" alt="DMA_technology_1"></p>
+<ol>
+<li>早期从磁盘中读取数据是要CPU自己读到寄存器中的，期间CPU没有办法执行其他任务，因为磁盘的读写速度是特别慢的（对比CPU和内存来说），所以CPU自己读是很浪费时间的</li>
+<li>DMA控制器就是帮助CPU从磁盘控制器缓冲区里读取数据到内核缓冲区，读完发送中断告知CPU; 在这期间不占用CPU, CPU可以去执行其他任务-&gt;提升了系统性能</li>
+<li>CPU收到DMA信号以后会将数据从内核缓冲区拷贝到用户空间, 至此, 系统调用返回</li>
+</ol>
+<h3 id="传统的文件传输有多糟糕"><a href="#传统的文件传输有多糟糕" class="headerlink" title="传统的文件传输有多糟糕?"></a>传统的文件传输有多糟糕?</h3><p><img src="/../images/networkSystem/network_system_2.png" alt="DMA_technology_2"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通文件的读写</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">read</span><span class="params">(<span class="type">int</span> fildes, <span class="type">void</span>* buf, <span class="type">size_t</span> nbytes)</span></span>;</span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">write</span><span class="params">(<span class="type">int</span> fildes, <span class="type">const</span> <span class="type">void</span>* buf, <span class="type">size_t</span> nbytes)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 专用于socket的读写</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">void</span>* buf, <span class="type">size_t</span> len, <span class="type">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">send</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="type">void</span>* buf, <span class="type">size_t</span> len, <span class="type">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>DMA控制器将数据从磁盘拷贝到内核空间</li>
+<li>CPU将数据从内核空间拷贝到用户空间, 用户才能够使用到这部分数据</li>
+<li>CPU将数据从用户空间拷贝到socket, 准备让网卡进行发送</li>
+<li>DMA控制器将数据从socket拷贝到网卡的缓冲区中, 进行发送</li>
+<li>为了传输这个数据发生了4次拷贝, 其中CPU参与了2次拷贝, 所以我们在开发的过程中要尽量避免用read, write这样低效率的方式去发送数据或者说发送文件</li>
+</ol>
+<h3 id="如何优化文件传输的性能"><a href="#如何优化文件传输的性能" class="headerlink" title="如何优化文件传输的性能?"></a>如何优化文件传输的性能?</h3><table>
+<thead>
+<tr>
+<th>关于系统调用</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>为什么要使用系统调用?</td>
+<td>因为用户空间没有操作磁盘或网卡的权限, 只有操作系统内核有权限, 所以需要使用操作系统内核提供的系统调用函数将数据从磁盘或网卡中提取出来</td>
+</tr>
+<tr>
+<td>系统调用函数的开销是什么?</td>
+<td>系统调用 x 1&#x3D;上下文切换 x 2, 用户数据要从用户态拷贝到内核态，在内核态处理完数据后又要从内核态拷贝回用户态</td>
+</tr>
+<tr>
+<td>如何减少系统调用的次数?</td>
+<td>由于内核缓存空间到用户缓存空间以后没有对数据进行再处理，而是直接发给socket缓冲区 -&gt; 用户缓冲区在这里没有必要存在</td>
+</tr>
+</tbody></table>
+<h3 id="如何实现零拷贝"><a href="#如何实现零拷贝" class="headerlink" title="如何实现零拷贝?"></a>如何实现零拷贝?</h3><ol>
+<li>首先看read函数<br> <img src="/../images/networkSystem/network_system_3.png" alt="DMA_technology_3"><ol>
+<li>read函数需要将内核缓冲区中的数据拷贝到用户缓冲区以后进行读取</li>
+<li>用mmap替换read函数-&gt;调用mmap函数以后，DMA会将磁盘中的数据拷贝到内核缓冲区中，然后让应用进程和操作系统共享这个缓冲区；</li>
+<li>应用进程调用write<ol>
+<li>CPU直接从内核缓冲区拷贝到socket缓冲区 -&gt; 不经过用户缓冲区，减少了1次数据拷贝</li>
+</ol>
+</li>
+<li>效果：<ol>
+<li>因为系统调用的次数还是2次(mmap + write) -&gt; 上下文切换次数还是4次</li>
+<li>用mmap系统调用函数替换read系统调用函数减少了1次数据拷贝</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>sendfile函数能够在两个文件描述符之间直接传递数据， 避免了内核缓冲区与用户缓冲区之间的数据拷贝， 真正实现了零拷贝<br> <img src="/../images/networkSystem/network_system_4.png" alt="DMA_technology_4"> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用sendfile要求linux内核版本在2.1以上</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">sendfile</span><span class="params">(<span class="type">int</span> out_fd, <span class="type">int</span> in_fd, <span class="type">off_t</span>* offset, <span class="type">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>sendfile函数可以代替read + write -&gt; 2次系统调用变成了1次系统调用-&gt;减少了2次上下文切换次数<br> <img src="/../images/networkSystem/network_system_5.png" alt="DMA_technology_5"></li>
+</ol>
+</li>
+<li>如果网卡支持SG-DMA（The Scatter-Gather Direct Memory Access） -&gt; 可以进一步减少通过 CPU 把内核缓冲区里的数据拷贝到 socket 缓冲区的过程<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡是否支持SG-DMA</span></span><br><span class="line">ethtool -k ens33 | grep scatter-gather</span><br><span class="line">scatter-gather: on</span><br></pre></td></tr></table></figure></li>
+<li>效果:<ol>
+<li>加上SG-DMA技术, 4次数据拷贝 -&gt; 2次数据拷贝</li>
+<li>sendfile代替read + write, 4次上下文切换 -&gt; 2次上下文切换(内核态&lt;&#x3D;&gt;用户态)</li>
+<li>整个过程中, CPU都没有参与数据拷贝的过程, 因为数据拷贝都交给DMA完成, 所以完全实现了零拷贝; </li>
+<li>使用零拷贝可以把文件传输性能提高一倍以上, 但是零拷贝技术不能对文件内容进一步加工(例如压缩后再发送)</li>
+</ol>
+</li>
+</ol>
+<h3 id="Pagecache有什么用"><a href="#Pagecache有什么用" class="headerlink" title="Pagecache有什么用?"></a>Pagecache有什么用?</h3><p>这里的Pagecache也就对应上面图片里面从磁盘文件里面拷贝出来的缓冲区</p>
+<ol>
+<li><p>其实就是内存中的高速缓冲区，因为读取磁盘的速度远远比不上读取内存的速度，所以把数据先保存到pagecache可以提升数据的读取速度</p>
+</li>
+<li><p>因为pagecache容量对比磁盘来说小很多，所以pagecache会淘汰一段时间内没用的数据</p>
+</li>
+<li><p>传输大文件的时候pagecache不适用，因为内存大小有限，而且大文件不是每部分都有用 -&gt; 占用了热点小文件的空间 -&gt; 降低了并发的处理效率</p>
+</li>
+<li><p>大文件拷贝不应该占用pagecache, 而零拷贝基于pagecache来实现, 所以, 大文件拷贝不适用零拷贝</p>
+</li>
+<li><p>大文件传输应该用什么实现？ 首先从传统的文件传输过程来切入</p>
+<table>
+<thead>
+<tr>
+<th align="center">传统的文件传输</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">系统调用read函数</td>
+</tr>
+<tr>
+<td align="center">内核向磁盘发起IO请求</td>
+</tr>
+<tr>
+<td align="center">磁盘将数据准备好并向内核发起IO中断</td>
+</tr>
+<tr>
+<td align="center">内核将数据从磁盘控制缓冲区读取到pagecache中</td>
+</tr>
+<tr>
+<td align="center">内核将数据从pagecache拷贝到用户缓冲区</td>
+</tr>
+<tr>
+<td align="center">read调用正常返回</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>上述过程存在的两个问题:  大文件占用了pagecache + read调用过程中阻塞进程</p>
+</li>
+<li><p>大文件占用了pagecache</p>
+<ol>
+<li>内核直接将数据从磁盘控制器缓冲区拷贝到用户缓冲区, 跳过了pagecache</li>
+<li>绕开pagecache的I&#x2F;O叫做直接I&#x2F;O; 使用pagecache的I&#x2F;O叫做缓存I&#x2F;O</li>
+</ol>
+</li>
+<li><p>read调用过程中阻塞进程 -&gt; 使用异步IO来解决, 用户进程发起异步IO读, 内核向磁盘发起读请求, 此时用户进程直接返回执行其他任务</p>
+</li>
+<li><p>所以, 针对大文件传输可以使用直接IO + 异步IO的方案来代替零拷贝技术; 对于Nginx来说, 判断文件是否为大文件的依据是: file_size &gt; directio &#x3D; 1024m, 也就是1G(仅供参考)</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/14/Hash-Table/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1439,20 +2108,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
