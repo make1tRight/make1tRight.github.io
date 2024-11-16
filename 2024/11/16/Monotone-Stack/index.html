@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="找两边比自己大的元素每日温度 思路：单调栈从栈顶到栈底是单调递增的，每当数组元素比栈顶元素更小则入栈，否则一直弹出栈顶元素并记录结果，直到栈顶元素比数组元素更大 为了记录更大元素与当前元素的距离，单调栈要维护的是元素的索引，作差就能得到距离  123456789101112131415161718192021class Solution &#123;public:    vector&lt;in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Monotone Stack">
+<meta property="og:url" content="http://example.com/2024/11/16/Monotone-Stack/index.html">
+<meta property="og:site_name" content="Make it right.">
+<meta property="og:description" content="找两边比自己大的元素每日温度 思路：单调栈从栈顶到栈底是单调递增的，每当数组元素比栈顶元素更小则入栈，否则一直弹出栈顶元素并记录结果，直到栈顶元素比数组元素更大 为了记录更大元素与当前元素的距离，单调栈要维护的是元素的索引，作差就能得到距离  123456789101112131415161718192021class Solution &#123;public:    vector&lt;in">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/monotoneStack_summary.png">
+<meta property="article:published_time" content="2024-11-16T03:02:58.000Z">
+<meta property="article:modified_time" content="2024-11-16T03:09:14.361Z">
+<meta property="article:author" content="Make1tRight">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="algorithm">
+<meta property="article:tag" content="stack">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/monotoneStack_summary.png">
+
+<link rel="canonical" href="http://example.com/2024/11/16/Monotone-Stack/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Monotone Stack | Make it right.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Make it right.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/16/Monotone-Stack/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Monotone Stack
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-16 11:02:58 / Modified: 11:09:14" itemprop="dateCreated datePublished" datetime="2024-11-16T11:02:58+08:00">2024-11-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="/../images/monotoneStack_summary.png" alt="monotoneStack_summary"></p>
+<h3 id="找两边比自己大的元素"><a href="#找两边比自己大的元素" class="headerlink" title="找两边比自己大的元素"></a>找两边比自己大的元素</h3><h4 id="每日温度"><a href="#每日温度" class="headerlink" title="每日温度"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/daily-temperatures/submissions/580661919/">每日温度</a></h4><ol>
+<li>思路：单调栈从栈顶到栈底是单调递增的，每当数组元素比栈顶元素更小则入栈，否则一直弹出栈顶元素并记录结果，直到栈顶元素比数组元素更大</li>
+<li>为了记录更大元素与当前元素的距离，单调栈要维护的是元素的索引，作差就能得到距离</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dailyTemperatures</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; temperatures)</span> </span>&#123;</span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">result</span><span class="params">(temperatures.size(), <span class="number">0</span>)</span></span>;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; temperatures.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (temperatures[i] &lt;= temperatures[st.<span class="built_in">top</span>()]) &#123; <span class="comment">//元素更小或者相等</span></span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;    <span class="comment">//元素更大 -&gt; 记录结果</span></span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; temperatures[st.<span class="built_in">top</span>()] &lt; temperatures[i]) &#123;</span><br><span class="line">                    result[st.<span class="built_in">top</span>()] = i - st.<span class="built_in">top</span>();</span><br><span class="line">                    st.<span class="built_in">pop</span>();</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i); <span class="comment">//最后不要忘记把元素放入栈内记录后面的结果</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="下一个更大元素Ⅰ"><a href="#下一个更大元素Ⅰ" class="headerlink" title="下一个更大元素Ⅰ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/next-greater-element-i/description/">下一个更大元素Ⅰ</a></h4><ol>
+<li>思路：B数组正常做单调栈（但是记录结果的时候转成A数组的索引），如果不是两个数组共有的元素只需要保持单调栈的单调性就可以，不需要记录结果</li>
+<li>建立键值对映射用unordered_map，在A数组上做映射、在B数组上做单调栈，AB数组之间的重要联系就是他们拥有的相同元素，那么就检查当前元素是否为两数组共有，用count来检查，用unordered_map来转换</li>
+<li>建立哪个数组的键值对？长度和哪个数组一致就用哪个；另一个不需要做映射，因为要在他上面做单调栈的遍历，另一个只需要记录结果</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">nextGreaterElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums1, vector&lt;<span class="type">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; umap;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums<span class="number">1.</span><span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            umap[nums1[i]] = i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">result</span><span class="params">(nums<span class="number">1.</span>size(), <span class="number">-1</span>)</span></span>;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; nums<span class="number">2.</span><span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums2[i] &lt;= nums2[st.<span class="built_in">top</span>()]) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; nums2[st.<span class="built_in">top</span>()] &lt; nums2[i]) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (umap.<span class="built_in">count</span>(nums2[st.<span class="built_in">top</span>()]) &gt; <span class="number">0</span>) &#123;  <span class="comment">//检查当前元素是否在nums1里面</span></span><br><span class="line">                        <span class="type">int</span> index = umap[nums2[st.<span class="built_in">top</span>()]];  <span class="comment">//记录当前元素的索引</span></span><br><span class="line">                        result[index] = nums2[i];           <span class="comment">//记录比当前元素大的元素</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    st.<span class="built_in">pop</span>();</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="下一个更大元素Ⅱ"><a href="#下一个更大元素Ⅱ" class="headerlink" title="下一个更大元素Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/next-greater-element-ii/">下一个更大元素Ⅱ</a></h4><ol>
+<li>思路：也是单调栈的模板题，只是需要循环遍历（对数组长度取模、或者也可以2个数组拼在一起）</li>
+<li>c.insert(p, b, e)将be指定范围（不能指向c中的元素）内的元素插入到迭代器p指向元素之前，时间复杂度是O(n)，虽然更直观但是更费时</li>
+<li>直接取模，遍历两倍的size是更高效的做法</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">nextGreaterElements</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/*****方法一：把nums重复拼接起来****</span></span><br><span class="line"><span class="comment">         *  数组两个拼在一起, 然后找一遍，只返回和nums一样大小的结果</span></span><br><span class="line"><span class="comment">         *  vector&lt;int&gt; result(nums.size(), -1);</span></span><br><span class="line"><span class="comment">         *  vector&lt;int&gt; doubleNums(nums.begin(), nums.end());</span></span><br><span class="line"><span class="comment">         *  doubleNums.insert(doubleNums.end(), nums.begin(), nums.end());</span></span><br><span class="line"><span class="comment">         *  后面的计算就不需要取膜了</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">         </span><br><span class="line">        <span class="comment">/*********方法二：取模运算*********/</span></span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">result</span><span class="params">(nums.size(), <span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="keyword">if</span> (nums.<span class="built_in">size</span>() == <span class="number">0</span>) <span class="keyword">return</span> result;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>() * <span class="number">2</span>; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i % nums.<span class="built_in">size</span>()] &lt;= nums[st.<span class="built_in">top</span>()]) &#123; <span class="comment">//取模</span></span><br><span class="line">                st.<span class="built_in">push</span>(i % nums.<span class="built_in">size</span>());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; nums[st.<span class="built_in">top</span>()] &lt; nums[i % nums.<span class="built_in">size</span>()]) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (st.<span class="built_in">top</span>() &lt; result.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                        result[st.<span class="built_in">top</span>()] = nums[i % nums.<span class="built_in">size</span>()];</span><br><span class="line">                    &#125;</span><br><span class="line">                    st.<span class="built_in">pop</span>();   </span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i % nums.<span class="built_in">size</span>());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="接雨水"><a href="#接雨水" class="headerlink" title="接雨水"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/trapping-rain-water/description/">接雨水</a></h4><ol>
+<li>思路：栈顶到栈底单调递增的单调栈，每当入栈元素比栈顶元素大的时候，弹出栈顶元素作为中间值，根据栈顶元素左右两边柱子的高度最小值和左右两边柱子的距离，横向计算所接雨水面积</li>
+<li>要注意栈顶指针是否到栈底，因为有pop以后再取值的操作，所以pop以后要手动检查一次</li>
+<li>每次计算面积的时候只弹出中间的元素，左边只参与计算，右边参与计算以后再入栈</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">trap</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (height.<span class="built_in">size</span>() &lt;= <span class="number">2</span>) <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">//剪枝</span></span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; height.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (height[i] &lt;= height[st.<span class="built_in">top</span>()]) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; height[st.<span class="built_in">top</span>()] &lt; height[i]) &#123;</span><br><span class="line">                    <span class="type">int</span> mid = st.<span class="built_in">top</span>();</span><br><span class="line">                    st.<span class="built_in">pop</span>();</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (!st.<span class="built_in">empty</span>()) &#123;    <span class="comment">//检查</span></span><br><span class="line">                        <span class="type">int</span> h = <span class="built_in">min</span>(height[i], height[st.<span class="built_in">top</span>()]) - height[mid];</span><br><span class="line">                        <span class="type">int</span> w = i - st.<span class="built_in">top</span>() - <span class="number">1</span>;</span><br><span class="line">                        result += w * h;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="找两边比自己小的元素"><a href="#找两边比自己小的元素" class="headerlink" title="找两边比自己小的元素"></a>找两边比自己小的元素</h3><h4 id="柱状图中最大的矩形"><a href="#柱状图中最大的矩形" class="headerlink" title="柱状图中最大的矩形"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/largest-rectangle-in-histogram/">柱状图中最大的矩形</a></h4><ol>
+<li>思路：根据三根柱子统计面积：通过栈顶到栈底单调递减的栈来找矩形的左右边界，根据左右边界+当前柱子的高度计算矩形最大面积</li>
+<li>为什么要三根柱子才能计算呢？左边比自己矮的柱子是左边界，右边比自己矮的柱子是右边界；如果柱子比自己高那么就可以扩展矩形的面积；要找两边都矮的柱子，也解释了构造栈顶到栈底是单调递减的栈的原因</li>
+<li>结果怎么统计？宽度就是柱子之间的距离（从1根柱子的情况开始统计的），高度就是中间柱子的高度</li>
+<li>为什么要在首尾位置添加0？<ol>
+<li>如果数组元素是单调递减的时候[8, 6, 4, 2]，那么栈里每次只会有1个元素，凑不齐3根柱子，导致进不到统计结果的逻辑 -&gt; 开头加一个0元素凑最左边的柱子，凑齐3根</li>
+<li>如果数组是单调递增的[2, 4, 6, 8]每个柱子都入栈，最后也进不到while循环里面，也无法凑齐3根柱子，导致进不到统计结果的逻辑 -&gt; 末尾加一个0元素凑最右边的柱子，凑齐3根</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">largestRectangleArea</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; heights)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        heights.<span class="built_in">insert</span>(heights.<span class="built_in">begin</span>(), <span class="number">0</span>); <span class="comment">//头尾插入0</span></span><br><span class="line">        heights.<span class="built_in">push_back</span>(<span class="number">0</span>);               <span class="comment">//便于结果统计</span></span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; heights.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (heights[st.<span class="built_in">top</span>()] &lt;= heights[i]) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; heights[i] &lt; heights[st.<span class="built_in">top</span>()]) &#123;</span><br><span class="line">                    <span class="type">int</span> mid = st.<span class="built_in">top</span>(); st.<span class="built_in">pop</span>();</span><br><span class="line">                    <span class="keyword">if</span> (!st.<span class="built_in">empty</span>()) &#123;      <span class="comment">//如果元素单调递减的话, 栈里永远只有1个元素, </span></span><br><span class="line">                        <span class="type">int</span> left = st.<span class="built_in">top</span>();</span><br><span class="line">                        <span class="type">int</span> right = i;</span><br><span class="line">                        <span class="type">int</span> w = right - left - <span class="number">1</span>;</span><br><span class="line">                        <span class="type">int</span> h = heights[mid];</span><br><span class="line">                        result = <span class="built_in">max</span>(result, w * h);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/algorithm/" rel="tag"># algorithm</a>
+              <a href="/tags/stack/" rel="tag"># stack</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/15/Process%20&%20Threads/" rel="prev" title="Computer System | Process & Threads">
+      <i class="fa fa-chevron-left"></i> Computer System | Process & Threads
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%BE%E4%B8%A4%E8%BE%B9%E6%AF%94%E8%87%AA%E5%B7%B1%E5%A4%A7%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">1.</span> <span class="nav-text">找两边比自己大的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6"><span class="nav-number">1.1.</span> <span class="nav-text">每日温度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0%E2%85%A0"><span class="nav-number">1.2.</span> <span class="nav-text">下一个更大元素Ⅰ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0%E2%85%A1"><span class="nav-number">1.3.</span> <span class="nav-text">下一个更大元素Ⅱ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E9%9B%A8%E6%B0%B4"><span class="nav-number">1.4.</span> <span class="nav-text">接雨水</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%BE%E4%B8%A4%E8%BE%B9%E6%AF%94%E8%87%AA%E5%B7%B1%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">2.</span> <span class="nav-text">找两边比自己小的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%B1%E7%8A%B6%E5%9B%BE%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84%E7%9F%A9%E5%BD%A2"><span class="nav-number">2.1.</span> <span class="nav-text">柱状图中最大的矩形</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Make1tRight"
+      src="/uploads/xiaoxin.jpg">
+  <p class="site-author-name" itemprop="name">Make1tRight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/make1tRight" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;make1tRight" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xliang9809@163.com" title="E-Mail → mailto:xliang9809@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Make1tRight</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
