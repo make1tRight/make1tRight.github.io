@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="malloc是如何分配内存的？  Linux进程的内存分布长什么样？ 内核空间是段页式管理结构  malloc是如何分配内存的？  malloc分配的是虚拟内存 -&gt; 如果不用到分配的虚拟内存是不会映射到物理内存的 -&gt; 节约物理内存空间 malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用  如果要分配的内存&lt;12">
+  <meta name="description" content="malloc是如何分配内存的？Linux进程的内存分布长什么样？内核空间是段页式管理结构 malloc是如何分配内存的？ malloc分配的是虚拟内存 -&gt; 如果不用到分配的虚拟内存是不会映射到物理内存的 -&gt; 节约物理内存空间 malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用 如果要分配的内存&lt;128KB通过br">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Computer System | How malloc works">
 <meta property="og:url" content="http://example.com/2024/11/16/How-malloc-works/index.html">
 <meta property="og:site_name" content="Make it right.">
-<meta property="og:description" content="malloc是如何分配内存的？  Linux进程的内存分布长什么样？ 内核空间是段页式管理结构  malloc是如何分配内存的？  malloc分配的是虚拟内存 -&gt; 如果不用到分配的虚拟内存是不会映射到物理内存的 -&gt; 节约物理内存空间 malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用  如果要分配的内存&lt;12">
+<meta property="og:description" content="malloc是如何分配内存的？Linux进程的内存分布长什么样？内核空间是段页式管理结构 malloc是如何分配内存的？ malloc分配的是虚拟内存 -&gt; 如果不用到分配的虚拟内存是不会映射到物理内存的 -&gt; 节约物理内存空间 malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用 如果要分配的内存&lt;128KB通过br">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/2024/11/16/images/malloc/malloc_1.png">
-<meta property="og:image" content="http://example.com/2024/11/16/images/malloc/malloc_2.png">
+<meta property="og:image" content="http://example.com/images/malloc/malloc_1.png">
+<meta property="og:image" content="http://example.com/images/malloc/malloc_2.png">
 <meta property="article:published_time" content="2024-11-16T05:56:34.000Z">
 <meta property="article:modified_time" content="2024-11-16T06:05:13.077Z">
 <meta property="article:author" content="Make1tRight">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="xiaolin coding">
 <meta property="article:tag" content="malloc">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2024/11/16/images/malloc/malloc_1.png">
+<meta name="twitter:image" content="http://example.com/images/malloc/malloc_1.png">
 
 <link rel="canonical" href="http://example.com/2024/11/16/How-malloc-works/">
 
@@ -213,31 +213,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="malloc是如何分配内存的"><a class="markdownIt-Anchor" href="#malloc是如何分配内存的"></a> malloc是如何分配内存的？</h2>
-<h3 id="linux进程的内存分布长什么样"><a class="markdownIt-Anchor" href="#linux进程的内存分布长什么样"></a> Linux进程的内存分布长什么样？</h3>
-<p>内核空间是段页式管理结构</p>
-<h3 id="malloc是如何分配内存的-2"><a class="markdownIt-Anchor" href="#malloc是如何分配内存的-2"></a> malloc是如何分配内存的？</h3>
-<ol>
+        <h2 id="malloc是如何分配内存的？"><a href="#malloc是如何分配内存的？" class="headerlink" title="malloc是如何分配内存的？"></a>malloc是如何分配内存的？</h2><h3 id="Linux进程的内存分布长什么样？"><a href="#Linux进程的内存分布长什么样？" class="headerlink" title="Linux进程的内存分布长什么样？"></a>Linux进程的内存分布长什么样？</h3><p>内核空间是段页式管理结构</p>
+<h3 id="malloc是如何分配内存的？-1"><a href="#malloc是如何分配内存的？-1" class="headerlink" title="malloc是如何分配内存的？"></a>malloc是如何分配内存的？</h3><ol>
 <li>malloc分配的是虚拟内存 -&gt; 如果不用到分配的虚拟内存是不会映射到物理内存的 -&gt; 节约物理内存空间</li>
-<li>malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用<br />
-<img src="../images/malloc/malloc_1.png" alt="malloc_1" /></li>
-<li>如果要分配的内存<code>&lt;128KB</code>通过brk()使堆顶指针上移 -&gt; 获得新的内存空间
-<ol>
+<li>malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用<br><img src="/../images/malloc/malloc_1.png" alt="malloc_1"></li>
+<li>如果要分配的内存<code>&lt;128KB</code>通过brk()使堆顶指针上移 -&gt; 获得新的内存空间<ol>
 <li>如果使用free指令，不会立即释放内存给操作系统，而是会缓存到malloc内存池中方便下次调用</li>
 <li>因为堆空间是连续的，为了减少因为系统调用产生的上下文切换次数，一般都会分配更多的内存，不用以后执行free指令把内存缓存到内存池中；对比mmap()分配的内存来说，减少了系统调用的开销、减少了缺页中断的次数提升了CPU效率</li>
 <li>举例说明，malloc(1)里面的参数虽然是字节数，但是不会严格按照我们设置的字节数来分配对应的空间数的，例如，malloc(1)会分配132K字节的内存</li>
 <li>随着系统频繁调用malloc和free，尤其对于小块的内存，在使用brk()分配内存的过程中，如果产生了向内核空间那样的用不了的内存碎片，就叫做内存泄漏（可以用Valgrind检查）</li>
 </ol>
 </li>
-<li>如果要分配的内存<code>&gt;128KB</code>通过mmap()在文件映射段里面分配一片内存
-<ol>
+<li>如果要分配的内存<code>&gt;128KB</code>通过mmap()在文件映射段里面分配一片内存<ol>
 <li>如果使用free指令就会立即释放内存操作系统</li>
 <li>因为mmap()指令是系统调用，所以涉及到内核态与用户态的上下文切换；</li>
-<li>因为mmap()分配的内存在执行free指令后一定会释放掉对应的内存，所以每当首次使用mmap()分配的内存都会触发一次缺页中断 -&gt; 加大CPU消耗<br />
-<img src="../images/malloc/malloc_2.png" alt="malloc_2" /></li>
+<li>因为mmap()分配的内存在执行free指令后一定会释放掉对应的内存，所以每当首次使用mmap()分配的内存都会触发一次缺页中断 -&gt; 加大CPU消耗<br> <img src="/../images/malloc/malloc_2.png" alt="malloc_2"></li>
 <li>malloc返回给用户的内存起始地址会比进程的堆空间起始地址多16字节，这16字节用来记录分配的内存块长度</li>
-<li>free对传入的内存向左偏移16字节就知道内存块的长度 -&gt; 释放对应大小的内存
-<ul>
+<li>free对传入的内存向左偏移16字节就知道内存块的长度 -&gt; 释放对应大小的内存<ul>
 <li>因为有这个内存块的头信息，我们在使用free的时候不需要指定大小</li>
 </ul>
 </li>
@@ -329,7 +321,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#malloc%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text"> malloc是如何分配内存的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#linux%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="nav-number">1.1.</span> <span class="nav-text"> Linux进程的内存分布长什么样？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#malloc%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84-2"><span class="nav-number">1.2.</span> <span class="nav-text"> malloc是如何分配内存的？</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#malloc%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">malloc是如何分配内存的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">Linux进程的内存分布长什么样？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#malloc%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84%EF%BC%9F-1"><span class="nav-number">1.2.</span> <span class="nav-text">malloc是如何分配内存的？</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -180,7 +180,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-11-16 14:06:45 / Modified: 14:40:29" itemprop="dateCreated datePublished" datetime="2024-11-16T14:06:45+08:00">2024-11-16</time>
+              <time title="Created: 2024-11-16 14:06:45 / Modified: 14:54:00" itemprop="dateCreated datePublished" datetime="2024-11-16T14:06:45+08:00">2024-11-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -321,31 +321,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="malloc是如何分配内存的"><a class="markdownIt-Anchor" href="#malloc是如何分配内存的"></a> malloc是如何分配内存的？</h2>
-<h3 id="linux进程的内存分布长什么样"><a class="markdownIt-Anchor" href="#linux进程的内存分布长什么样"></a> Linux进程的内存分布长什么样？</h3>
-<p>内核空间是段页式管理结构</p>
-<h3 id="malloc是如何分配内存的-2"><a class="markdownIt-Anchor" href="#malloc是如何分配内存的-2"></a> malloc是如何分配内存的？</h3>
-<ol>
+          <h2 id="malloc是如何分配内存的？"><a href="#malloc是如何分配内存的？" class="headerlink" title="malloc是如何分配内存的？"></a>malloc是如何分配内存的？</h2><h3 id="Linux进程的内存分布长什么样？"><a href="#Linux进程的内存分布长什么样？" class="headerlink" title="Linux进程的内存分布长什么样？"></a>Linux进程的内存分布长什么样？</h3><p>内核空间是段页式管理结构</p>
+<h3 id="malloc是如何分配内存的？-1"><a href="#malloc是如何分配内存的？-1" class="headerlink" title="malloc是如何分配内存的？"></a>malloc是如何分配内存的？</h3><ol>
 <li>malloc分配的是虚拟内存 -&gt; 如果不用到分配的虚拟内存是不会映射到物理内存的 -&gt; 节约物理内存空间</li>
-<li>malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用<br />
-<img src="../images/malloc/malloc_1.png" alt="malloc_1" /></li>
-<li>如果要分配的内存<code>&lt;128KB</code>通过brk()使堆顶指针上移 -&gt; 获得新的内存空间
-<ol>
+<li>malloc不是系统调用，是C库函数，但是malloc调用的brk()和mmap()指令都是用来管理内存的系统调用<br><img src="/../images/malloc/malloc_1.png" alt="malloc_1"></li>
+<li>如果要分配的内存<code>&lt;128KB</code>通过brk()使堆顶指针上移 -&gt; 获得新的内存空间<ol>
 <li>如果使用free指令，不会立即释放内存给操作系统，而是会缓存到malloc内存池中方便下次调用</li>
 <li>因为堆空间是连续的，为了减少因为系统调用产生的上下文切换次数，一般都会分配更多的内存，不用以后执行free指令把内存缓存到内存池中；对比mmap()分配的内存来说，减少了系统调用的开销、减少了缺页中断的次数提升了CPU效率</li>
 <li>举例说明，malloc(1)里面的参数虽然是字节数，但是不会严格按照我们设置的字节数来分配对应的空间数的，例如，malloc(1)会分配132K字节的内存</li>
 <li>随着系统频繁调用malloc和free，尤其对于小块的内存，在使用brk()分配内存的过程中，如果产生了向内核空间那样的用不了的内存碎片，就叫做内存泄漏（可以用Valgrind检查）</li>
 </ol>
 </li>
-<li>如果要分配的内存<code>&gt;128KB</code>通过mmap()在文件映射段里面分配一片内存
-<ol>
+<li>如果要分配的内存<code>&gt;128KB</code>通过mmap()在文件映射段里面分配一片内存<ol>
 <li>如果使用free指令就会立即释放内存操作系统</li>
 <li>因为mmap()指令是系统调用，所以涉及到内核态与用户态的上下文切换；</li>
-<li>因为mmap()分配的内存在执行free指令后一定会释放掉对应的内存，所以每当首次使用mmap()分配的内存都会触发一次缺页中断 -&gt; 加大CPU消耗<br />
-<img src="../images/malloc/malloc_2.png" alt="malloc_2" /></li>
+<li>因为mmap()分配的内存在执行free指令后一定会释放掉对应的内存，所以每当首次使用mmap()分配的内存都会触发一次缺页中断 -&gt; 加大CPU消耗<br> <img src="/../images/malloc/malloc_2.png" alt="malloc_2"></li>
 <li>malloc返回给用户的内存起始地址会比进程的堆空间起始地址多16字节，这16字节用来记录分配的内存块长度</li>
-<li>free对传入的内存向左偏移16字节就知道内存块的长度 -&gt; 释放对应大小的内存
-<ul>
+<li>free对传入的内存向左偏移16字节就知道内存块的长度 -&gt; 释放对应大小的内存<ul>
 <li>因为有这个内存块的头信息，我们在使用free的时候不需要指定大小</li>
 </ul>
 </li>
@@ -419,40 +411,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="为什么要有虚拟内存"><a class="markdownIt-Anchor" href="#为什么要有虚拟内存"></a> 为什么要有虚拟内存？</h2>
-<h3 id="虚拟内存是什么"><a class="markdownIt-Anchor" href="#虚拟内存是什么"></a> 虚拟内存是什么？</h3>
-<ol>
+          <h2 id="为什么要有虚拟内存？"><a href="#为什么要有虚拟内存？" class="headerlink" title="为什么要有虚拟内存？"></a>为什么要有虚拟内存？</h2><h3 id="虚拟内存是什么？"><a href="#虚拟内存是什么？" class="headerlink" title="虚拟内存是什么？"></a>虚拟内存是什么？</h3><ol>
 <li>单片机没有操作系统，需要把程序烧录到内存中去才能运行；如果要运行其他程序，因为程序是直接访问物理内存的，这时候只能把旧程序废弃，烧录新程序到内存中去，所以对于单片机来说不能让两个程序同时运行；引入了虚拟内存就能够让操作系统同时运行多个程序</li>
 <li>程序所用的内存空间是虚拟内存地址；实际在硬件上的空间地址是物理内存地址</li>
 <li>多个程序运行过程中互不干扰的原因在于，他们都只访问各自的虚拟地址，都不直接访问物理地址</li>
 <li>操作系统通过内存分段和内存分页的方式来管理虚拟内存和物理内存之间的关系</li>
 </ol>
-<h3 id="内存分段"><a class="markdownIt-Anchor" href="#内存分段"></a> 内存分段</h3>
-<p><img src="../images/virtual_memory/virtual_memory_1.png" alt="virtual_memory_1" /></p>
+<h3 id="内存分段"><a href="#内存分段" class="headerlink" title="内存分段"></a>内存分段</h3><p><img src="/../images/virtual_memory/virtual_memory_1.png" alt="virtual_memory_1"></p>
 <ol>
 <li>程序是由代码段、数据段、堆段、栈段组成的，内存分段就是按照程序中不同段的功能将内存地址进行分段</li>
-<li>分段机制下，虚拟地址由段选择因子和段内偏移量组成
-<ol>
+<li>分段机制下，虚拟地址由段选择因子和段内偏移量组成<ol>
 <li>段选择因子就是标记段号，哪些段从哪个基地址开始</li>
 <li>基地址+偏移量就能够说明从哪里到哪里是哪个段</li>
 </ol>
 </li>
-<li>分段的办法会引发外部内存碎片、内存交换效率低的问题
-<ol>
+<li>分段的办法会引发外部内存碎片、内存交换效率低的问题<ol>
 <li>两段不连续的100MB内存无法运行一个200MB的程序，因为他们之间不连续，程序加载不进去</li>
 <li>解决外部内存碎片的方案是内存交换，也就是把空闲内存之间占用的内存先换到磁盘中去，把空闲内存变成连续的一段、再把原来占用的部分还原到内存中；linux的swap内存就是干这个事的；因为涉及到磁盘读写，就有了内存交换效率低的问题</li>
 </ol>
 </li>
 </ol>
-<h3 id="内存分页"><a class="markdownIt-Anchor" href="#内存分页"></a> 内存分页</h3>
-<p><img src="../images/virtual_memory/virtual_memory_2.png" alt="virtual_memory_2" /></p>
+<h3 id="内存分页"><a href="#内存分页" class="headerlink" title="内存分页"></a>内存分页</h3><p><img src="/../images/virtual_memory/virtual_memory_2.png" alt="virtual_memory_2"></p>
 <ol>
 <li>为解决外部内存碎片和内存交换效率低的问题，思路就是让内存碎片变小一些，解决方案是把虚拟内存空间和物理内存空间都分成连续且尺寸固定的内存空间，称为页，也就是内存分页；</li>
 <li>MMU是内存管理单元，功能是将虚拟内存和物理地址进行转换</li>
-<li>因为页与页之间是紧密排布的，不会产生外部碎片；另外，如果有一个页里面内存空间没有用完，将一个页换出到磁盘中开销也远远比换一个段更小<br />
-<img src="../images/virtual_memory/virtual_memory_3.png" alt="virtual_memory_3" /></li>
-<li>内存分页的缺点在于，每个进程都要有用于记录页号和偏移量的页表，一个进程如果是4MB的页表，100个进程就是400MB的页表 -&gt; 用于存储页表的内存非常大
-<ol>
+<li>因为页与页之间是紧密排布的，不会产生外部碎片；另外，如果有一个页里面内存空间没有用完，将一个页换出到磁盘中开销也远远比换一个段更小<br><img src="/../images/virtual_memory/virtual_memory_3.png" alt="virtual_memory_3"></li>
+<li>内存分页的缺点在于，每个进程都要有用于记录页号和偏移量的页表，一个进程如果是4MB的页表，100个进程就是400MB的页表 -&gt; 用于存储页表的内存非常大<ol>
 <li>虚拟内存空间共有4GB，一个页的大小如果是4KB，那么就有100W页</li>
 <li>页表一行需要4个字节来存储一个页的信息，4GB空间映射要花费4M来保存一个页</li>
 </ol>
@@ -461,35 +445,28 @@
 <li>多级页表就是先分配1024行映射整个物理地址空间，等到进程实际要用的时候再去分配二级页表（或者说下一级页表）</li>
 <li>64位系统的页表有4级分页</li>
 </ol>
-<h3 id="段页式内存管理"><a class="markdownIt-Anchor" href="#段页式内存管理"></a> 段页式内存管理</h3>
-<p><img src="../images/virtual_memory/virtual_memory_4.png" alt="virtual_memory_4" /><br />
-<img src="../images/virtual_memory/virtual_memory_5.png" alt="virtual_memory_5" /></p>
+<h3 id="段页式内存管理"><a href="#段页式内存管理" class="headerlink" title="段页式内存管理"></a>段页式内存管理</h3><p><img src="/../images/virtual_memory/virtual_memory_4.png" alt="virtual_memory_4"><br><img src="/../images/virtual_memory/virtual_memory_5.png" alt="virtual_memory_5"></p>
 <ol>
 <li>内存分段和内存分页结合的方式就是段页式内存管理；一个进程按不同段的功能分段，将信息记录到一个段表中，每行写的是页表的起始地址；页表里面写的是物理页号，将物理页号和偏移量组合就是物理地址</li>
 <li>段页式管理提升了内存的利用率</li>
 </ol>
-<h3 id="linux内存布局"><a class="markdownIt-Anchor" href="#linux内存布局"></a> Linux内存布局</h3>
-<ol>
+<h3 id="Linux内存布局"><a href="#Linux内存布局" class="headerlink" title="Linux内存布局"></a>Linux内存布局</h3><ol>
 <li>主要采用页式内存管理，也有段，但是每个段的起始地址都是一样的；</li>
-<li>每个进程都有独立的虚拟内存，每个虚拟内存中的内核地址关联的都是同一片物理地址<br />
-<img src="../images/virtual_memory/virtual_memory_6.png" alt="virtual_memory_6" /></li>
+<li>每个进程都有独立的虚拟内存，每个虚拟内存中的内核地址关联的都是同一片物理地址<br><img src="/../images/virtual_memory/virtual_memory_6.png" alt="virtual_memory_6"></li>
 </ol>
 <p><strong>用户空间的内存分布情况：</strong></p>
 <ol>
-<li>栈的大小是固定的，包括局部变量和函数调用上下文信息（函数参数），每次申请新的栈地址，地址值都在减少
-<ol>
+<li>栈的大小是固定的，包括局部变量和函数调用上下文信息（函数参数），每次申请新的栈地址，地址值都在减少<ol>
 <li>start_stack标识栈的起始位置、RSP寄存器保存栈顶指针stack pointer、RBP寄存器保存栈基地址</li>
 </ol>
 </li>
-<li>文件映射与匿名映射区，用来存放动态链接库（动态链接库也有自己的代码段、数据段、BSS段，动态链接库的这3段会加入到这个区里面）和内存映射区域（用于建立文件与内存的映射）（dynamic link library）
-<ol>
+<li>文件映射与匿名映射区，用来存放动态链接库（动态链接库也有自己的代码段、数据段、BSS段，动态链接库的这3段会加入到这个区里面）和内存映射区域（用于建立文件与内存的映射）（dynamic link library）<ol>
 <li>动态链接库的代码可被多个程序共享，不会被编译到可执行文件中，所以节约了系统资源</li>
 <li>因为不会被编译到可执行文件中，所以动态链接库可以单独更新，不需要修改使用它的程序（libstdc++.dll，STL也是动态链接库）</li>
 </ol>
 </li>
 <li>在栈区和文件映射与匿名映射区，地址增长方向都是从上往下增长</li>
-<li>堆、文件映射段都是在程序运行期间动态分配的（动态申请内存）
-<ol>
+<li>堆、文件映射段都是在程序运行期间动态分配的（动态申请内存）<ol>
 <li>mmap()在文件映射段动态分配内存，文件映射段包括动态库、共享内存</li>
 <li>malloc()在堆动态分配内存，start_brk标识堆的起始位置，brk标识堆当前结束的位置，增长也是由brk堆顶指针来向上增长</li>
 </ol>
@@ -499,8 +476,7 @@
 <li>代码段是可执行的指令，也可以理解成机器码</li>
 <li>最下面灰色的部分不可访问，防止代码跑飞，NULL指针就指向这个区域</li>
 </ol>
-<h3 id="虚拟内存作用总结"><a class="markdownIt-Anchor" href="#虚拟内存作用总结"></a> 虚拟内存作用总结</h3>
-<ol>
+<h3 id="虚拟内存作用总结"><a href="#虚拟内存作用总结" class="headerlink" title="虚拟内存作用总结"></a>虚拟内存作用总结</h3><ol>
 <li>多进程独享各自的页表，各进程在运行的过程中互不干扰，解决多地址冲突的问题</li>
 <li>能够将不常使用的内存换出到磁盘中，节约内存空间</li>
 </ol>
@@ -571,43 +547,43 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="../images/monotoneStack_summary.png" alt="monotoneStack_summary" /></p>
-<h3 id="找两边比自己大的元素"><a class="markdownIt-Anchor" href="#找两边比自己大的元素"></a> 找两边比自己大的元素</h3>
-<h4 id="每日温度"><a class="markdownIt-Anchor" href="#每日温度"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/daily-temperatures/submissions/580661919/">每日温度</a></h4>
-<ol>
+          <p><img src="/../images/monotoneStack_summary.png" alt="monotoneStack_summary"></p>
+<h3 id="找两边比自己大的元素"><a href="#找两边比自己大的元素" class="headerlink" title="找两边比自己大的元素"></a>找两边比自己大的元素</h3><h4 id="每日温度"><a href="#每日温度" class="headerlink" title="每日温度"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/daily-temperatures/submissions/580661919/">每日温度</a></h4><ol>
 <li>思路：单调栈从栈顶到栈底是单调递增的，每当数组元素比栈顶元素更小则入栈，否则一直弹出栈顶元素并记录结果，直到栈顶元素比数组元素更大</li>
 <li>为了记录更大元素与当前元素的距离，单调栈要维护的是元素的索引，作差就能得到距离</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dailyTemperatures</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; temperatures)</span> </span>&#123;</span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">result</span><span class="params">(temperatures.size(), <span class="number">0</span>)</span></span>;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; temperatures.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (temperatures[i] &lt;= temperatures[st.<span class="built_in">top</span>()]) &#123; <span class="comment">//元素更小或者相等</span></span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;    <span class="comment">//元素更大 -&gt; 记录结果</span></span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; temperatures[st.<span class="built_in">top</span>()] &lt; temperatures[i]) &#123;</span><br><span class="line">                    result[st.<span class="built_in">top</span>()] = i - st.<span class="built_in">top</span>();</span><br><span class="line">                    st.<span class="built_in">pop</span>();</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i); <span class="comment">//最后不要忘记把元素放入栈内记录后面的结果</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="下一个更大元素i"><a class="markdownIt-Anchor" href="#下一个更大元素i"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/next-greater-element-i/description/">下一个更大元素Ⅰ</a></h4>
-<ol>
+
+<h4 id="下一个更大元素Ⅰ"><a href="#下一个更大元素Ⅰ" class="headerlink" title="下一个更大元素Ⅰ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/next-greater-element-i/description/">下一个更大元素Ⅰ</a></h4><ol>
 <li>思路：B数组正常做单调栈（但是记录结果的时候转成A数组的索引），如果不是两个数组共有的元素只需要保持单调栈的单调性就可以，不需要记录结果</li>
 <li>建立键值对映射用unordered_map，在A数组上做映射、在B数组上做单调栈，AB数组之间的重要联系就是他们拥有的相同元素，那么就检查当前元素是否为两数组共有，用count来检查，用unordered_map来转换</li>
 <li>建立哪个数组的键值对？长度和哪个数组一致就用哪个；另一个不需要做映射，因为要在他上面做单调栈的遍历，另一个只需要记录结果</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">nextGreaterElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums1, vector&lt;<span class="type">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; umap;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums<span class="number">1.</span><span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            umap[nums1[i]] = i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">result</span><span class="params">(nums<span class="number">1.</span>size(), <span class="number">-1</span>)</span></span>;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; nums<span class="number">2.</span><span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums2[i] &lt;= nums2[st.<span class="built_in">top</span>()]) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; nums2[st.<span class="built_in">top</span>()] &lt; nums2[i]) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (umap.<span class="built_in">count</span>(nums2[st.<span class="built_in">top</span>()]) &gt; <span class="number">0</span>) &#123;  <span class="comment">//检查当前元素是否在nums1里面</span></span><br><span class="line">                        <span class="type">int</span> index = umap[nums2[st.<span class="built_in">top</span>()]];  <span class="comment">//记录当前元素的索引</span></span><br><span class="line">                        result[index] = nums2[i];           <span class="comment">//记录比当前元素大的元素</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    st.<span class="built_in">pop</span>();</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="下一个更大元素ii"><a class="markdownIt-Anchor" href="#下一个更大元素ii"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/next-greater-element-ii/">下一个更大元素Ⅱ</a></h4>
-<ol>
+
+
+<h4 id="下一个更大元素Ⅱ"><a href="#下一个更大元素Ⅱ" class="headerlink" title="下一个更大元素Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/next-greater-element-ii/">下一个更大元素Ⅱ</a></h4><ol>
 <li>思路：也是单调栈的模板题，只是需要循环遍历（对数组长度取模、或者也可以2个数组拼在一起）</li>
 <li>c.insert(p, b, e)将be指定范围（不能指向c中的元素）内的元素插入到迭代器p指向元素之前，时间复杂度是O(n)，虽然更直观但是更费时</li>
 <li>直接取模，遍历两倍的size是更高效的做法</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">nextGreaterElements</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/*****方法一：把nums重复拼接起来****</span></span><br><span class="line"><span class="comment">         *  数组两个拼在一起, 然后找一遍，只返回和nums一样大小的结果</span></span><br><span class="line"><span class="comment">         *  vector&lt;int&gt; result(nums.size(), -1);</span></span><br><span class="line"><span class="comment">         *  vector&lt;int&gt; doubleNums(nums.begin(), nums.end());</span></span><br><span class="line"><span class="comment">         *  doubleNums.insert(doubleNums.end(), nums.begin(), nums.end());</span></span><br><span class="line"><span class="comment">         *  后面的计算就不需要取膜了</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">         </span><br><span class="line">        <span class="comment">/*********方法二：取模运算*********/</span></span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">result</span><span class="params">(nums.size(), <span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="keyword">if</span> (nums.<span class="built_in">size</span>() == <span class="number">0</span>) <span class="keyword">return</span> result;</span><br><span class="line"></span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>() * <span class="number">2</span>; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i % nums.<span class="built_in">size</span>()] &lt;= nums[st.<span class="built_in">top</span>()]) &#123; <span class="comment">//取模</span></span><br><span class="line">                st.<span class="built_in">push</span>(i % nums.<span class="built_in">size</span>());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; nums[st.<span class="built_in">top</span>()] &lt; nums[i % nums.<span class="built_in">size</span>()]) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (st.<span class="built_in">top</span>() &lt; result.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                        result[st.<span class="built_in">top</span>()] = nums[i % nums.<span class="built_in">size</span>()];</span><br><span class="line">                    &#125;</span><br><span class="line">                    st.<span class="built_in">pop</span>();   </span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i % nums.<span class="built_in">size</span>());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="接雨水"><a class="markdownIt-Anchor" href="#接雨水"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/trapping-rain-water/description/">接雨水</a></h4>
-<ol>
+
+
+<h4 id="接雨水"><a href="#接雨水" class="headerlink" title="接雨水"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/trapping-rain-water/description/">接雨水</a></h4><ol>
 <li>思路：栈顶到栈底单调递增的单调栈，每当入栈元素比栈顶元素大的时候，弹出栈顶元素作为中间值，根据栈顶元素左右两边柱子的高度最小值和左右两边柱子的距离，横向计算所接雨水面积</li>
 <li>要注意栈顶指针是否到栈底，因为有pop以后再取值的操作，所以pop以后要手动检查一次</li>
 <li>每次计算面积的时候只弹出中间的元素，左边只参与计算，右边参与计算以后再入栈</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">trap</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (height.<span class="built_in">size</span>() &lt;= <span class="number">2</span>) <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">//剪枝</span></span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; st;</span><br><span class="line">        st.<span class="built_in">push</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; height.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (height[i] &lt;= height[st.<span class="built_in">top</span>()]) &#123;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!st.<span class="built_in">empty</span>() &amp;&amp; height[st.<span class="built_in">top</span>()] &lt; height[i]) &#123;</span><br><span class="line">                    <span class="type">int</span> mid = st.<span class="built_in">top</span>();</span><br><span class="line">                    st.<span class="built_in">pop</span>();</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (!st.<span class="built_in">empty</span>()) &#123;    <span class="comment">//检查</span></span><br><span class="line">                        <span class="type">int</span> h = <span class="built_in">min</span>(height[i], height[st.<span class="built_in">top</span>()]) - height[mid];</span><br><span class="line">                        <span class="type">int</span> w = i - st.<span class="built_in">top</span>() - <span class="number">1</span>;</span><br><span class="line">                        result += w * h;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                st.<span class="built_in">push</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="找两边比自己小的元素"><a class="markdownIt-Anchor" href="#找两边比自己小的元素"></a> 找两边比自己小的元素</h3>
-<h4 id="柱状图中最大的矩形"><a class="markdownIt-Anchor" href="#柱状图中最大的矩形"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/largest-rectangle-in-histogram/">柱状图中最大的矩形</a></h4>
-<ol>
+
+
+
+<h3 id="找两边比自己小的元素"><a href="#找两边比自己小的元素" class="headerlink" title="找两边比自己小的元素"></a>找两边比自己小的元素</h3><h4 id="柱状图中最大的矩形"><a href="#柱状图中最大的矩形" class="headerlink" title="柱状图中最大的矩形"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/largest-rectangle-in-histogram/">柱状图中最大的矩形</a></h4><ol>
 <li>思路：根据三根柱子统计面积：通过栈顶到栈底单调递减的栈来找矩形的左右边界，根据左右边界+当前柱子的高度计算矩形最大面积</li>
 <li>为什么要三根柱子才能计算呢？左边比自己矮的柱子是左边界，右边比自己矮的柱子是右边界；如果柱子比自己高那么就可以扩展矩形的面积；要找两边都矮的柱子，也解释了构造栈顶到栈底是单调递减的栈的原因</li>
 <li>结果怎么统计？宽度就是柱子之间的距离（从1根柱子的情况开始统计的），高度就是中间柱子的高度</li>
-<li>为什么要在首尾位置添加0？
-<ol>
+<li>为什么要在首尾位置添加0？<ol>
 <li>如果数组元素是单调递减的时候[8, 6, 4, 2]，那么栈里每次只会有1个元素，凑不齐3根柱子，导致进不到统计结果的逻辑 -&gt; 开头加一个0元素凑最左边的柱子，凑齐3根</li>
 <li>如果数组是单调递增的[2, 4, 6, 8]每个柱子都入栈，最后也进不到while循环里面，也无法凑齐3根柱子，导致进不到统计结果的逻辑 -&gt; 末尾加一个0元素凑最右边的柱子，凑齐3根</li>
 </ol>
@@ -680,43 +656,51 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="进程-线程基础知识"><a class="markdownIt-Anchor" href="#进程-线程基础知识"></a> 进程、线程基础知识</h2>
-<h3 id="进程基础知识"><a class="markdownIt-Anchor" href="#进程基础知识"></a> 进程基础知识</h3>
-<h4 id="什么是进程"><a class="markdownIt-Anchor" href="#什么是进程"></a> 什么是进程？</h4>
-<ol>
+          <h2 id="进程、线程基础知识"><a href="#进程、线程基础知识" class="headerlink" title="进程、线程基础知识"></a>进程、线程基础知识</h2><h3 id="进程基础知识"><a href="#进程基础知识" class="headerlink" title="进程基础知识"></a>进程基础知识</h3><h4 id="什么是进程？"><a href="#什么是进程？" class="headerlink" title="什么是进程？"></a>什么是进程？</h4><ol>
 <li>可执行程序被装载到内存中运行，CPU执行其中每一条指令的过程叫做进程</li>
-<li>对于一个支持多进程的系统来说, CPU会为每个进程分配时间片, 时间(一般是几十ms或几百ms)到了以后会自动切换其他进程并执行; 在任一瞬间, CPU都只能执行一个进程, 但是在一秒钟来看, CPU执行了多个进程, 这个就叫做并发.<br />
-<img src="../images/processManagement/process_management_1.png" alt="process_management_1" /></li>
+<li>对于一个支持多进程的系统来说, CPU会为每个进程分配时间片, 时间(一般是几十ms或几百ms)到了以后会自动切换其他进程并执行; 在任一瞬间, CPU都只能执行一个进程, 但是在一秒钟来看, CPU执行了多个进程, 这个就叫做并发.<br><img src="/../images/processManagement/process_management_1.png" alt="process_management_1"></li>
 <li>并行和并发不一样; 并发是CPU不断切换进程, 并行是不同的核同时执行不同的任务</li>
 <li>CPU可以在不同进程之间切换, 但是在切换之前要记录当前执行程序的状态信息, 否则下一次切回到这个进程都不知道工作到哪里了; 进程有执行-&gt; 暂停 -&gt; 执行的规律</li>
 </ol>
-<h4 id="进程的状态"><a class="markdownIt-Anchor" href="#进程的状态"></a> 进程的状态</h4>
-<ol>
-<li>基本状态是创建和结束这两个状态; 因为CPU执行进程的特点, 进程还有运行状态、就绪状态、阻塞状态<br />
-<img src="../images/processManagement/process_management_2.png" alt="process_management_2" /></li>
-<li>进程处于阻塞状态的时候，进程没有发挥作用还占用了物理内存空间；因为内存空间是十分宝贵的，如果有大量的进程处于阻塞状态，会占用大量的内存；
-<ol>
+<h4 id="进程的状态"><a href="#进程的状态" class="headerlink" title="进程的状态"></a>进程的状态</h4><ol>
+<li>基本状态是创建和结束这两个状态; 因为CPU执行进程的特点, 进程还有运行状态、就绪状态、阻塞状态<br><img src="/../images/processManagement/process_management_2.png" alt="process_management_2"></li>
+<li>进程处于阻塞状态的时候，进程没有发挥作用还占用了物理内存空间；因为内存空间是十分宝贵的，如果有大量的进程处于阻塞状态，会占用大量的内存；<ol>
 <li>这时我们可以把阻塞的进程保存到磁盘当中去</li>
 <li>在进程就绪并且被调度执行的时候再还原到内存中去</li>
-<li>处于磁盘中的进程有就绪挂起和阻塞挂起两个状态；Ctrl+Z, 挂起的<br />
-<img src="../images/processManagement/process_management_3.png" alt="process_management_3" /></li>
+<li>处于磁盘中的进程有就绪挂起和阻塞挂起两个状态；Ctrl+Z, 挂起的<br> <img src="/../images/processManagement/process_management_3.png" alt="process_management_3"></li>
 </ol>
 </li>
 </ol>
-<h4 id="进程的控制结构"><a class="markdownIt-Anchor" href="#进程的控制结构"></a> 进程的控制结构</h4>
-<ol>
+<h4 id="进程的控制结构"><a href="#进程的控制结构" class="headerlink" title="进程的控制结构"></a>进程的控制结构</h4><ol>
 <li>操作系统中，用进程控制块（process control block，PCB）来描述进程；PCB是进程存在的唯一标识，如果进程存在，就会有一个PCB；如果进程消失，PCB也消失</li>
-<li>PCB包含的信息<br />
-|||<br />
-|—|—|<br />
-|进程描述信息|标识进程和进程归属用户|<br />
-|进程控制和管理信息|标识进程运行的状态和进程运行的优先级|<br />
-|资源分配清单|标识内存地址空间或虚拟内存空间的信息（打开的文件列表和所使用的IO设备信息）|<br />
-|CPU相关信息|CPU中各寄存器的值，保证还原的时候能够从断点继续执行|</li>
+<li>PCB包含的信息<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程描述信息</td>
+<td>标识进程和进程归属用户</td>
+</tr>
+<tr>
+<td>进程控制和管理信息</td>
+<td>标识进程运行的状态和进程运行的优先级</td>
+</tr>
+<tr>
+<td>资源分配清单</td>
+<td>标识内存地址空间或虚拟内存空间的信息（打开的文件列表和所使用的IO设备信息）</td>
+</tr>
+<tr>
+<td>CPU相关信息</td>
+<td>CPU中各寄存器的值，保证还原的时候能够从断点继续执行</td>
+</tr>
+</tbody></table>
+</li>
 <li>因为进程的创建和销毁经常发生，为了更方便插入和删除节点，PCB一般使用链表进行组织，状态为就绪的进程归到一类 -&gt; 就绪队列；状态为阻塞的进程归到一类 -&gt; 阻塞队列;  除了链表还有索引表的形式, 将不同状态的进程加入到不同索引表中, 索引表中每行指向相应的PCB</li>
 </ol>
-<h4 id="进程的控制"><a class="markdownIt-Anchor" href="#进程的控制"></a> 进程的控制</h4>
-<table>
+<h4 id="进程的控制"><a href="#进程的控制" class="headerlink" title="进程的控制"></a>进程的控制</h4><table>
 <thead>
 <tr>
 <th>创建进程</th>
@@ -725,8 +709,7 @@
 <th>唤醒进程</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>申请空白PCB, 向PCB中填写进程相关信息</td>
 <td>查找要终止的进程</td>
 <td>找到要阻塞的进程</td>
@@ -762,22 +745,36 @@
 <td>阻塞的进程只能由其他进程唤醒</td>
 <td>只有该进程期待的事情出现,才由发现者进程唤醒</td>
 </tr>
-</tbody>
-</table>
-<h4 id="进程的上下文切换"><a class="markdownIt-Anchor" href="#进程的上下文切换"></a> 进程的上下文切换</h4>
-<ol>
+</tbody></table>
+<h4 id="进程的上下文切换"><a href="#进程的上下文切换" class="headerlink" title="进程的上下文切换"></a>进程的上下文切换</h4><ol>
 <li>一个进程切换到另一个进程就叫做进程的上下文切换, 但是在切换之前要保护现场</li>
 <li>对于CPU的上下文切换, 为了让CPU能够继续执行之前未执行完毕的任务, 需要保存<strong>CPU寄存器和程序计数器</strong>这两个信息, 他们是CPU在执行任何任务必须依赖的环境, 即CPU上下文；CPU所执行的任务包括进程、线程和中断三种，根据任务的不同，CPU的上下文切换可以分为进程的上下文切换、线程的上下文切换和中断的上下文切换</li>
-<li>进程上下文切换的内容<br />
-<img src="../images/processManagement/process_management_3.png" alt="process_management_3" /><br />
-|内核空间（进程由内核调度、管理，进程的切换只发生在内核态）|用户空间|<br />
-|—|—|<br />
-|内核堆栈|虚拟内存|<br />
-|寄存器|栈|<br />
-||全局变量|<br />
-|上下文切换过程中，信息会被保存到PCB中；要保存的信息越少，上下文切换的开销越小，程序执行效率越高|</li>
-<li>发生进程上下文切换的场景
-<ol>
+<li>进程上下文切换的内容<br><img src="/../images/processManagement/process_management_3.png" alt="process_management_3"><table>
+<thead>
+<tr>
+<th>内核空间（进程由内核调度、管理，进程的切换只发生在内核态）</th>
+<th>用户空间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内核堆栈</td>
+<td>虚拟内存</td>
+</tr>
+<tr>
+<td>寄存器</td>
+<td>栈</td>
+</tr>
+<tr>
+<td></td>
+<td>全局变量</td>
+</tr>
+<tr>
+<td>上下文切换过程中，信息会被保存到PCB中；要保存的信息越少，上下文切换的开销越小，程序执行效率越高</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li>发生进程上下文切换的场景<ol>
 <li>系统资源不足，进程被挂起</li>
 <li>有硬件中断，CPU进程被中断挂起，先去执行中断</li>
 <li>当前进程时间片耗尽，从执行状态转到就绪状态</li>
@@ -786,16 +783,12 @@
 </ol>
 </li>
 </ol>
-<h3 id="线程基础知识"><a class="markdownIt-Anchor" href="#线程基础知识"></a> 线程基础知识</h3>
-<h4 id="什么是线程"><a class="markdownIt-Anchor" href="#什么是线程"></a> 什么是线程？</h4>
-<ol>
+<h3 id="线程基础知识"><a href="#线程基础知识" class="headerlink" title="线程基础知识"></a>线程基础知识</h3><h4 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h4><ol>
 <li>进程虽然可以让CPU同时完成不同的任务，但是每次切换进程的时候，因为每个进程依赖的环境都不一样，所以每次都需要进行上下文切换；线程就是想让CPU既能够完成不同的任务（即实体之间并发运行），又让实体之间能够共享相同的地址空间</li>
-<li>线程是进程当中的一条执行流程<br />
-<img src="../images/processManagement/process_management_4.png" alt="process_management_4" /></li>
-<li>C/C++里面，一个线程崩溃会导致相同进程的其他线程也崩溃，所以做游戏不能用多线程</li>
+<li>线程是进程当中的一条执行流程<br><img src="/../images/processManagement/process_management_4.png" alt="process_management_4"></li>
+<li>C&#x2F;C++里面，一个线程崩溃会导致相同进程的其他线程也崩溃，所以做游戏不能用多线程</li>
 </ol>
-<h4 id="线程与进程的比较"><a class="markdownIt-Anchor" href="#线程与进程的比较"></a> 线程与进程的比较</h4>
-<p>线程创建和终止的开销都比进程小，因为不用分配或释放地址空间、文件等资源</p>
+<h4 id="线程与进程的比较"><a href="#线程与进程的比较" class="headerlink" title="线程与进程的比较"></a>线程与进程的比较</h4><p>线程创建和终止的开销都比进程小，因为不用分配或释放地址空间、文件等资源</p>
 <table>
 <thead>
 <tr>
@@ -803,8 +796,7 @@
 <th>线程</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>资源分配的最小单位</td>
 <td>CPU调度的最小单位</td>
 </tr>
@@ -820,79 +812,92 @@
 <td>切换进程要切换页表</td>
 <td>切换线程不用切换页表</td>
 </tr>
-</tbody>
-</table>
-<h4 id="线程的上下文切换"><a class="markdownIt-Anchor" href="#线程的上下文切换"></a> 线程的上下文切换</h4>
-<ol>
+</tbody></table>
+<h4 id="线程的上下文切换"><a href="#线程的上下文切换" class="headerlink" title="线程的上下文切换"></a>线程的上下文切换</h4><ol>
 <li>操作系统在进行任务调度的过程中，调度的对象实际上是线程</li>
 <li>如果是不同进程之间的线程进行上下文切换，那切换线程和切换进程是一样的</li>
 <li>如果是相同进程之间的线程进行上下文切换，因为地址空间、文件、虚拟内存等资源是共享的，所以只需要切换寄存器和栈等线程独享资源即可</li>
 </ol>
-<h4 id="线程的实现"><a class="markdownIt-Anchor" href="#线程的实现"></a> 线程的实现</h4>
-<ol>
+<h4 id="线程的实现"><a href="#线程的实现" class="headerlink" title="线程的实现"></a>线程的实现</h4><ol>
 <li>在用户空间实现的线程是用户线程；在内核空间实现的线程由内核管理，是内核线程；用户线程和内核线程有多对一、一对一、多对多的关系</li>
-<li>用户线程基于用户态的线程管理库来实现，（多用户线程对一内核线程）
-<ol>
+<li>用户线程基于用户态的线程管理库来实现，（多用户线程对一内核线程）<ol>
 <li>对应的线程控制块（Thread Control Block）也由线程管理库来实现（我理解的TCB实现了对PCB更细粒度的管理），TCB保存各个线程的状态信息，包括PC、栈指针、寄存器</li>
-<li>操作系统不直接参与用户线程的管理，由线程管理库完成对线程的创建、终止、同步和调度管理操作<br />
-|用户线程的优点|用户线程的缺点|<br />
-|—|—|<br />
-|切换由线程库函数自己完成，在用户态就能完成，因此不需要在用户态和内核态进行切换，速度特别快|用户线程在执行过程中不能被中断，只有操作系统才有打断线程执行的特权|<br />
-|TCB由用户级线程管理库来实现，可用于不支持线程技术的操作系统|因为操作系统不参与用户线程的管理，如果线程发起系统调用而被阻塞，同一进程下的其他线程也都无法运行|<br />
-||时间片是分配给进程的，所以线程得到的时间片更少，执行速度更慢|</li>
-<li>内核线程由操作系统管理，线程的创建、终止、同步和调度管理操作由操作系统完成（一用户线程对一内核线程）<br />
-|内核线程的优点|内核线程的缺点|<br />
-|—|—|<br />
-|一个内核线程发起系统调用被阻塞，其他内核线程不会受影响|内核来维护PCB和TCB|<br />
-|分配的CPU运行时间更多|线程的创建、终止、同步和调度管理操作通过系统调用来完成，开销更大|</li>
+<li>操作系统不直接参与用户线程的管理，由线程管理库完成对线程的创建、终止、同步和调度管理操作<table>
+<thead>
+<tr>
+<th>用户线程的优点</th>
+<th>用户线程的缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>切换由线程库函数自己完成，在用户态就能完成，因此不需要在用户态和内核态进行切换，速度特别快</td>
+<td>用户线程在执行过程中不能被中断，只有操作系统才有打断线程执行的特权</td>
+</tr>
+<tr>
+<td>TCB由用户级线程管理库来实现，可用于不支持线程技术的操作系统</td>
+<td>因为操作系统不参与用户线程的管理，如果线程发起系统调用而被阻塞，同一进程下的其他线程也都无法运行</td>
+</tr>
+<tr>
+<td></td>
+<td>时间片是分配给进程的，所以线程得到的时间片更少，执行速度更慢</td>
+</tr>
+</tbody></table>
+</li>
+<li>内核线程由操作系统管理，线程的创建、终止、同步和调度管理操作由操作系统完成（一用户线程对一内核线程）<table>
+<thead>
+<tr>
+<th>内核线程的优点</th>
+<th>内核线程的缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一个内核线程发起系统调用被阻塞，其他内核线程不会受影响</td>
+<td>内核来维护PCB和TCB</td>
+</tr>
+<tr>
+<td>分配的CPU运行时间更多</td>
+<td>线程的创建、终止、同步和调度管理操作通过系统调用来完成，开销更大</td>
+</tr>
+</tbody></table>
+</li>
 <li>轻量级线程Light-Weight Process是由内核支持的用户线程</li>
 </ol>
 </li>
 </ol>
-<h3 id="调度"><a class="markdownIt-Anchor" href="#调度"></a> 调度</h3>
-<p>调度程序的功能就是选择一个进程来运行，由操作系统来完成；调度就是进程从一个状态切换到另一个状态</p>
-<h4 id="调度时机"><a class="markdownIt-Anchor" href="#调度时机"></a> 调度时机</h4>
-<ol>
-<li>调度算法根据处理时钟中断的机制分为非抢占式调度算法和抢占式调度算法
-<ol>
+<h3 id="调度"><a href="#调度" class="headerlink" title="调度"></a>调度</h3><p>调度程序的功能就是选择一个进程来运行，由操作系统来完成；调度就是进程从一个状态切换到另一个状态</p>
+<h4 id="调度时机"><a href="#调度时机" class="headerlink" title="调度时机"></a>调度时机</h4><ol>
+<li>调度算法根据处理时钟中断的机制分为非抢占式调度算法和抢占式调度算法<ol>
 <li>非抢占式调度算法，不理会时钟中断，当前进程执行完毕，或者当前进程退出以后才去执行下一进程</li>
 <li>抢占式调度算法，也就是时间片机制，分配给进程的时间片用完以后触发时钟中断，将CPU控制返回给调度程序进行调度</li>
 </ol>
 </li>
 </ol>
-<h4 id="调度原则-让进程更快完成"><a class="markdownIt-Anchor" href="#调度原则-让进程更快完成"></a> 调度原则 - 让进程更快完成</h4>
-<ol>
+<h4 id="调度原则-让进程更快完成"><a href="#调度原则-让进程更快完成" class="headerlink" title="调度原则 - 让进程更快完成"></a>调度原则 - 让进程更快完成</h4><ol>
 <li>CPU利用率要高，当发生IO事件请求的时候就必须从就绪队列中取出进程来运行</li>
 <li>系统吞吐量，就是单位时间内CPU完成进程的数量，系统的吞吐量越高越好</li>
 <li>周转时间包括进程运行时间+进程等待时间，一个进程的周转时间越小越好</li>
 <li>等待时间，进程在就绪队列中的时间</li>
 <li>响应时间，从用户发出请求到系统第一次产生响应的时间；在交互式系统中，响应时间是衡量调度算法好坏的标准</li>
 </ol>
-<h4 id="调度算法单核cpu"><a class="markdownIt-Anchor" href="#调度算法单核cpu"></a> 调度算法(单核CPU)</h4>
-<ol>
+<h4 id="调度算法-单核CPU"><a href="#调度算法-单核CPU" class="headerlink" title="调度算法(单核CPU)"></a>调度算法(单核CPU)</h4><ol>
 <li>先来先服务FCFS调度算法，按进程在就绪队列中的顺序一个一个执行；非抢占式，当一个长作业先运行，后面的短作业也必须等待</li>
 <li>对短作业优先Shortest Job First调度算法，优先选择运行时间最短的进程来运行；对长作业不利，短作业一直处于优先地位，长作业只能一直等待，会导致周转时间变长</li>
-<li>高响应比优先Highest Response Ratio Next调度算法，$$优先权=\frac{等待时间+要求服务时间}{要求服务时间}$$，要求服务时间不可预估，不能实现</li>
+<li>高响应比优先Highest Response Ratio Next调度算法，$$优先权&#x3D;\frac{等待时间+要求服务时间}{要求服务时间}$$，要求服务时间不可预估，不能实现</li>
 <li>时间片轮转Round Robin调度算法，时间片就是时间段；时间片用完了进程还在执行 -&gt; 把进程从CPU释放出来，分配给其他进程；时间片没用完但是进程结束或被阻塞 -&gt; CPU立即切换；一般来说时间片的长度是20ms ~ 50ms</li>
-<li>最高优先级HPF调度算法，调度程序在就绪队列中选择优先级高的进程优先运行；
-<ol>
-<li>优先级有动态和静态优先级两种，
-<ol>
+<li>最高优先级HPF调度算法，调度程序在就绪队列中选择优先级高的进程优先运行；<ol>
+<li>优先级有动态和静态优先级两种，<ol>
 <li>静态优先级是在创建进程的时候就固定好优先级后面不会改变</li>
 <li>动态优先级是等待时间长的进程优先级变高、运行时间长的进程优先级降低</li>
 </ol>
 </li>
-<li>这个调度算法有抢占式和非抢占式两种
-<ol>
+<li>这个调度算法有抢占式和非抢占式两种<ol>
 <li>非抢占式，当前进程执行完以后，在就绪队列中选择优先级高的进程优先运行</li>
 <li>抢占式，有优先级高的进程直接挂起当前进程，调度优先级高的进程运行</li>
 </ol>
 </li>
 </ol>
 </li>
-<li>多级反馈队列Multilevel Feedback Queue调度算法, RR+HPF, 多级就是有多个队列，每个队列的优先级从高到低、反馈就是如果有新的进程加入到更高优先级队列时，挂起当前进程去执行更高优先级队列中的进程<br />
-<img src="../images/processManagement/process_management_5.png" alt="process_management_5" />
-<ol>
+<li>多级反馈队列Multilevel Feedback Queue调度算法, RR+HPF, 多级就是有多个队列，每个队列的优先级从高到低、反馈就是如果有新的进程加入到更高优先级队列时，挂起当前进程去执行更高优先级队列中的进程<br> <img src="/../images/processManagement/process_management_5.png" alt="process_management_5"><ol>
 <li>优先级越高的队列中，进程分配到的时间片越短</li>
 <li>新的进程都被放到第一优先级的队列中，如果在对应时间片内没有执行完，加入到下一优先级队列中去</li>
 <li>兼顾了长短作业，同时响应时间也保证了，因为每个进程一开始都是加在最高优先级队列的，很快就能被响应，搞不定再降级</li>
@@ -966,97 +971,104 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="io多路复用-selectpollepoll"><a class="markdownIt-Anchor" href="#io多路复用-selectpollepoll"></a> I/O多路复用: select/poll/epoll</h2>
-<h3 id="最基本的socket模型"><a class="markdownIt-Anchor" href="#最基本的socket模型"></a> 最基本的Socket模型</h3>
-<ol>
-<li>Socket = IP + Port</li>
+          <h2 id="I-O多路复用-select-poll-epoll"><a href="#I-O多路复用-select-poll-epoll" class="headerlink" title="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll"></a>I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</h2><h3 id="最基本的Socket模型"><a href="#最基本的Socket模型" class="headerlink" title="最基本的Socket模型"></a>最基本的Socket模型</h3><ol>
+<li>Socket &#x3D; IP + Port</li>
 <li>服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)</li>
 </ol>
-<h3 id="如何服务更多用户"><a class="markdownIt-Anchor" href="#如何服务更多用户"></a> 如何服务更多用户?</h3>
-<ol>
+<h3 id="如何服务更多用户"><a href="#如何服务更多用户" class="headerlink" title="如何服务更多用户?"></a>如何服务更多用户?</h3><ol>
 <li>C10K问题, 就是能否支持并发1万请求</li>
 <li>单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询</span></span><br><span class="line"><span class="built_in">ulimit</span> -n </span><br><span class="line"></span><br><span class="line"><span class="comment"># 设定为m</span></span><br><span class="line"><span class="built_in">ulimit</span> -n m</span><br></pre></td></tr></table></figure>
-<h3 id="多进程模型"><a class="markdownIt-Anchor" href="#多进程模型"></a> 多进程模型</h3>
-<ol>
-<li>
-<p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型<br />
-| 多进程模型(父进程负责监听, 子进程负责处理业务) | 多线程模型 |<br />
-| --------- | --------- |<br />
-| server在LISTEN状态下, 客户端发起connect | 与多进程模型相同 |<br />
-| 服务端accept | 与多进程模型相同 |<br />
-| 应用父进程fork一个子进程 | pthread_create()创建新的线程 |<br />
-| 子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息) | 在线程中实现与客户端的数据交换 |<br />
-| 子进程专门处理数据的读写、父进程继续监听socket | - |<br />
-| 如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换 | - |</p>
+
+<h3 id="多进程模型"><a href="#多进程模型" class="headerlink" title="多进程模型"></a>多进程模型</h3><ol>
+<li><p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型</p>
+<table>
+<thead>
+<tr>
+<th>多进程模型(父进程负责监听, 子进程负责处理业务)</th>
+<th>多线程模型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>server在LISTEN状态下, 客户端发起connect</td>
+<td>与多进程模型相同</td>
+</tr>
+<tr>
+<td>服务端accept</td>
+<td>与多进程模型相同</td>
+</tr>
+<tr>
+<td>应用父进程fork一个子进程</td>
+<td>pthread_create()创建新的线程</td>
+</tr>
+<tr>
+<td>子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息)</td>
+<td>在线程中实现与客户端的数据交换</td>
+</tr>
+<tr>
+<td>子进程专门处理数据的读写、父进程继续监听socket</td>
+<td>-</td>
+</tr>
+<tr>
+<td>如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换</td>
+<td>-</td>
+</tr>
+</tbody></table>
 </li>
-<li>
-<p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
+<li><p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
 </li>
-<li>
-<p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
+<li><p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
 </li>
-<li>
-<p>另外，父进程要通过调用wait()/pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
+<li><p>另外，父进程要通过调用wait()&#x2F;pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
 </li>
 </ol>
-<h3 id="多线程模型"><a class="markdownIt-Anchor" href="#多线程模型"></a> 多线程模型</h3>
-<ol>
+<h3 id="多线程模型"><a href="#多线程模型" class="headerlink" title="多线程模型"></a>多线程模型</h3><ol>
 <li>因为多进程模型在使用过程中，进程的上下文切换开销特别大，所以需要更小开销的多线程模型</li>
 <li>多线程模型的优势在于，线程共享进程的代码、全局数据、进程空间、文件描述符列表、堆、共享库等资源  -&gt; 切换线程的时候只需要复制寄存器、线程私有数据等专属资源，开销更小、速度更快</li>
-<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源
-<ol>
+<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源<ol>
 <li>可以启用线程池，在建立连接之前就将线程创建好</li>
 <li>从全连接队列（ESTABLISHED）中取出全连接对象-&gt;进行数据交换 -&gt; 数据交换结束后也不需要释放对应线程，放回到线程池里即可</li>
 </ol>
 </li>
 </ol>
-<h4 id="io多路复用"><a class="markdownIt-Anchor" href="#io多路复用"></a> I/O多路复用</h4>
-<ol>
-<li>要实现C10K，单纯使用多线程/多进程模型意味着需要1w个线程/进程，现在自己的电脑也才32线程</li>
+<h4 id="I-O多路复用"><a href="#I-O多路复用" class="headerlink" title="I&#x2F;O多路复用"></a>I&#x2F;O多路复用</h4><ol>
+<li>要实现C10K，单纯使用多线程&#x2F;多进程模型意味着需要1w个线程&#x2F;进程，现在自己的电脑也才32线程</li>
 <li>IO多路复用技术类似于CPU的并发技术，对每个socket都分配一个时间片，到期以后切换下一个socket，看起来就像是同时处理了多个socket（也叫时分多路复用技术）</li>
-<li>常见的IO复用技术就是select/poll和epoll（看todolist2-day60）
-<ol>
-<li>select/poll都要遍历文件描述符列表去检查哪些socket可读/可写；select/poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读/可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
+<li>常见的IO复用技术就是select&#x2F;poll和epoll（看todolist2-day60）<ol>
+<li>select&#x2F;poll都要遍历文件描述符列表去检查哪些socket可读&#x2F;可写；select&#x2F;poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读&#x2F;可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
 <li>epoll维护红黑树[时间复杂度<code>O(logn)</code>]+链表，能够解决C10K问题</li>
 </ol>
 </li>
-<li>边缘触发和水平触发 - select/poll只支持LT水平触发，epoll支持LT和ET两种</li>
+<li>边缘触发和水平触发 - select&#x2F;poll只支持LT水平触发，epoll支持LT和ET两种</li>
 </ol>
-<h5 id="linux下的三种io复用方式epoll-select和poll"><a class="markdownIt-Anchor" href="#linux下的三种io复用方式epoll-select和poll"></a> Linux下的三种IO复用方式：epoll、select和poll</h5>
-<ol>
-<li>select:
-<ol>
+<h5 id="Linux下的三种IO复用方式：epoll、select和poll"><a href="#Linux下的三种IO复用方式：epoll、select和poll" class="headerlink" title="Linux下的三种IO复用方式：epoll、select和poll"></a>Linux下的三种IO复用方式：epoll、select和poll</h5><ol>
+<li>select:<ol>
 <li>所有文件描述符在用户态被加入其文件描述符集合，每次调用都需要将整个集合拷贝到内核态</li>
 <li>使用线性表描述文件描述符集合，文件描述符有上限</li>
 <li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
 <li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
 </ol>
 </li>
-<li>poll:
-<ol>
+<li>poll:<ol>
 <li>所有文件描述符都是在用户态被加入其文件描述符集合的，每次调用都需要将整个集合拷贝到内核态</li>
 <li>使用链表来描述文件描述符集合</li>
 <li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
 <li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
 </ol>
 </li>
-<li>epoll:
-<ol>
+<li>epoll:<ol>
 <li>将整个文件描述符集合维护在内核态，每次添加文件描述符的时候都需要执行一个系统调用(系统调用的开销很大， 因此在有很多短期活跃连接的情况下，epoll可能会慢于select和poll)</li>
-<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可
-<ol>
+<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可<ol>
 <li>待检测的socket加入到自己维护的红黑树中</li>
 <li>epoll_wait从链表中取出已经就绪的socket</li>
 <li>红黑树的增删改时间复杂度是O(logn)比bitsmap和动态数组的O(n)效率更高</li>
-<li>不用去遍历哪个可读/可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
+<li>不用去遍历哪个可读&#x2F;可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
 <li>另外，epoll仍旧需要把数据从内核态拷贝到用户态</li>
 </ol>
 </li>
 <li>不需要遍历整个文件描述符集合，当有活动产生时，会自动触发epoll回调函数通知epoll文件描述符，然后内核将这些就绪的文件描述符放到之前提到的ready list中等待epoll_wait调用后被处理</li>
-<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)
-<ol>
+<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)<ol>
 <li>LT会去遍历在epoll事件表中每个文件描述符，来观察是否有我们感兴趣的事件发生，如果有（触发了该文件描述符上的回调函数），epoll_wait就会以非阻塞的方式返回。若该epoll事件没有被处理完（没有返回EWOULDBLOCK），该事件还会被后续的epoll_wait再次触发</li>
 <li>ET在发现有我们感兴趣的事件发生后，立即返回，并且sleep这一事件的epoll_wait，不管该事件有没有结束 -&gt; 使用ET模式必须保证fd是非阻塞的，每次调用read和write的时候都必须等到他们返回EWOULDBLOCK</li>
 </ol>
@@ -1132,16 +1144,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="什么是零拷贝技术"><a class="markdownIt-Anchor" href="#什么是零拷贝技术"></a> 什么是零拷贝技术？</h2>
-<h3 id="为什么要有dma技术"><a class="markdownIt-Anchor" href="#为什么要有dma技术"></a> 为什么要有DMA技术?</h3>
-<p><img src="../images/networkSystem/network_system_1.png" alt="DMA_technology_1" /></p>
+          <h2 id="什么是零拷贝技术？"><a href="#什么是零拷贝技术？" class="headerlink" title="什么是零拷贝技术？"></a>什么是零拷贝技术？</h2><h3 id="为什么要有DMA技术"><a href="#为什么要有DMA技术" class="headerlink" title="为什么要有DMA技术?"></a>为什么要有DMA技术?</h3><p><img src="/../images/networkSystem/network_system_1.png" alt="DMA_technology_1"></p>
 <ol>
 <li>早期从磁盘中读取数据是要CPU自己读到寄存器中的，期间CPU没有办法执行其他任务，因为磁盘的读写速度是特别慢的（对比CPU和内存来说），所以CPU自己读是很浪费时间的</li>
 <li>DMA控制器就是帮助CPU从磁盘控制器缓冲区里读取数据到内核缓冲区，读完发送中断告知CPU; 在这期间不占用CPU, CPU可以去执行其他任务-&gt;提升了系统性能</li>
 <li>CPU收到DMA信号以后会将数据从内核缓冲区拷贝到用户空间, 至此, 系统调用返回</li>
 </ol>
-<h3 id="传统的文件传输有多糟糕"><a class="markdownIt-Anchor" href="#传统的文件传输有多糟糕"></a> 传统的文件传输有多糟糕?</h3>
-<p><img src="../images/networkSystem/network_system_2.png" alt="DMA_technology_2" /></p>
+<h3 id="传统的文件传输有多糟糕"><a href="#传统的文件传输有多糟糕" class="headerlink" title="传统的文件传输有多糟糕?"></a>传统的文件传输有多糟糕?</h3><p><img src="/../images/networkSystem/network_system_2.png" alt="DMA_technology_2"></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通文件的读写</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">read</span><span class="params">(<span class="type">int</span> fildes, <span class="type">void</span>* buf, <span class="type">size_t</span> nbytes)</span></span>;</span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">write</span><span class="params">(<span class="type">int</span> fildes, <span class="type">const</span> <span class="type">void</span>* buf, <span class="type">size_t</span> nbytes)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 专用于socket的读写</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">void</span>* buf, <span class="type">size_t</span> len, <span class="type">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">send</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="type">void</span>* buf, <span class="type">size_t</span> len, <span class="type">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
 <ol>
 <li>DMA控制器将数据从磁盘拷贝到内核空间</li>
@@ -1150,110 +1159,103 @@
 <li>DMA控制器将数据从socket拷贝到网卡的缓冲区中, 进行发送</li>
 <li>为了传输这个数据发生了4次拷贝, 其中CPU参与了2次拷贝, 所以我们在开发的过程中要尽量避免用read, write这样低效率的方式去发送数据或者说发送文件</li>
 </ol>
-<h3 id="如何优化文件传输的性能"><a class="markdownIt-Anchor" href="#如何优化文件传输的性能"></a> 如何优化文件传输的性能?</h3>
-<table>
+<h3 id="如何优化文件传输的性能"><a href="#如何优化文件传输的性能" class="headerlink" title="如何优化文件传输的性能?"></a>如何优化文件传输的性能?</h3><table>
 <thead>
 <tr>
 <th>关于系统调用</th>
 <th>原因</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>为什么要使用系统调用?</td>
 <td>因为用户空间没有操作磁盘或网卡的权限, 只有操作系统内核有权限, 所以需要使用操作系统内核提供的系统调用函数将数据从磁盘或网卡中提取出来</td>
 </tr>
 <tr>
 <td>系统调用函数的开销是什么?</td>
-<td>系统调用 x 1=上下文切换 x 2, 用户数据要从用户态拷贝到内核态，在内核态处理完数据后又要从内核态拷贝回用户态</td>
+<td>系统调用 x 1&#x3D;上下文切换 x 2, 用户数据要从用户态拷贝到内核态，在内核态处理完数据后又要从内核态拷贝回用户态</td>
 </tr>
 <tr>
 <td>如何减少系统调用的次数?</td>
 <td>由于内核缓存空间到用户缓存空间以后没有对数据进行再处理，而是直接发给socket缓冲区 -&gt; 用户缓冲区在这里没有必要存在</td>
 </tr>
-</tbody>
-</table>
-<h3 id="如何实现零拷贝"><a class="markdownIt-Anchor" href="#如何实现零拷贝"></a> 如何实现零拷贝?</h3>
-<ol>
-<li>首先看read函数<br />
-<img src="../images/networkSystem/network_system_3.png" alt="DMA_technology_3" />
-<ol>
+</tbody></table>
+<h3 id="如何实现零拷贝"><a href="#如何实现零拷贝" class="headerlink" title="如何实现零拷贝?"></a>如何实现零拷贝?</h3><ol>
+<li>首先看read函数<br> <img src="/../images/networkSystem/network_system_3.png" alt="DMA_technology_3"><ol>
 <li>read函数需要将内核缓冲区中的数据拷贝到用户缓冲区以后进行读取</li>
 <li>用mmap替换read函数-&gt;调用mmap函数以后，DMA会将磁盘中的数据拷贝到内核缓冲区中，然后让应用进程和操作系统共享这个缓冲区；</li>
-<li>应用进程调用write
-<ol>
+<li>应用进程调用write<ol>
 <li>CPU直接从内核缓冲区拷贝到socket缓冲区 -&gt; 不经过用户缓冲区，减少了1次数据拷贝</li>
 </ol>
 </li>
-<li>效果：
-<ol>
+<li>效果：<ol>
 <li>因为系统调用的次数还是2次(mmap + write) -&gt; 上下文切换次数还是4次</li>
 <li>用mmap系统调用函数替换read系统调用函数减少了1次数据拷贝</li>
 </ol>
 </li>
 </ol>
 </li>
-<li>sendfile函数能够在两个文件描述符之间直接传递数据， 避免了内核缓冲区与用户缓冲区之间的数据拷贝， 真正实现了零拷贝<br />
-<img src="../images/networkSystem/network_system_4.png" alt="DMA_technology_4" /> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用sendfile要求linux内核版本在2.1以上</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">sendfile</span><span class="params">(<span class="type">int</span> out_fd, <span class="type">int</span> in_fd, <span class="type">off_t</span>* offset, <span class="type">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
+<li>sendfile函数能够在两个文件描述符之间直接传递数据， 避免了内核缓冲区与用户缓冲区之间的数据拷贝， 真正实现了零拷贝<br> <img src="/../images/networkSystem/network_system_4.png" alt="DMA_technology_4"> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用sendfile要求linux内核版本在2.1以上</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">sendfile</span><span class="params">(<span class="type">int</span> out_fd, <span class="type">int</span> in_fd, <span class="type">off_t</span>* offset, <span class="type">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
 <ol>
-<li>sendfile函数可以代替read + write -&gt; 2次系统调用变成了1次系统调用-&gt;减少了2次上下文切换次数<br />
-<img src="../images/networkSystem/network_system_5.png" alt="DMA_technology_5" /></li>
+<li>sendfile函数可以代替read + write -&gt; 2次系统调用变成了1次系统调用-&gt;减少了2次上下文切换次数<br> <img src="/../images/networkSystem/network_system_5.png" alt="DMA_technology_5"></li>
 </ol>
 </li>
-<li>如果网卡支持SG-DMA（The Scatter-Gather Direct Memory Access） -&gt; 可以进一步减少通过 CPU 把内核缓冲区里的数据拷贝到 socket 缓冲区的过程</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡是否支持SG-DMA</span></span><br><span class="line">ethtool -k ens33 | grep scatter-gather</span><br><span class="line">scatter-gather: on</span><br></pre></td></tr></table></figure>
-<ol start="4">
-<li>效果:
-<ol>
+<li>如果网卡支持SG-DMA（The Scatter-Gather Direct Memory Access） -&gt; 可以进一步减少通过 CPU 把内核缓冲区里的数据拷贝到 socket 缓冲区的过程<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡是否支持SG-DMA</span></span><br><span class="line">ethtool -k ens33 | grep scatter-gather</span><br><span class="line">scatter-gather: on</span><br></pre></td></tr></table></figure></li>
+<li>效果:<ol>
 <li>加上SG-DMA技术, 4次数据拷贝 -&gt; 2次数据拷贝</li>
-<li>sendfile代替read + write, 4次上下文切换 -&gt; 2次上下文切换(内核态&lt;=&gt;用户态)</li>
-<li>整个过程中, CPU都没有参与数据拷贝的过程, 因为数据拷贝都交给DMA完成, 所以完全实现了零拷贝;</li>
+<li>sendfile代替read + write, 4次上下文切换 -&gt; 2次上下文切换(内核态&lt;&#x3D;&gt;用户态)</li>
+<li>整个过程中, CPU都没有参与数据拷贝的过程, 因为数据拷贝都交给DMA完成, 所以完全实现了零拷贝; </li>
 <li>使用零拷贝可以把文件传输性能提高一倍以上, 但是零拷贝技术不能对文件内容进一步加工(例如压缩后再发送)</li>
 </ol>
 </li>
 </ol>
-<h3 id="pagecache有什么用"><a class="markdownIt-Anchor" href="#pagecache有什么用"></a> Pagecache有什么用?</h3>
-<p>这里的Pagecache也就对应上面图片里面从磁盘文件里面拷贝出来的缓冲区</p>
+<h3 id="Pagecache有什么用"><a href="#Pagecache有什么用" class="headerlink" title="Pagecache有什么用?"></a>Pagecache有什么用?</h3><p>这里的Pagecache也就对应上面图片里面从磁盘文件里面拷贝出来的缓冲区</p>
 <ol>
-<li>
-<p>其实就是内存中的高速缓冲区，因为读取磁盘的速度远远比不上读取内存的速度，所以把数据先保存到pagecache可以提升数据的读取速度</p>
+<li><p>其实就是内存中的高速缓冲区，因为读取磁盘的速度远远比不上读取内存的速度，所以把数据先保存到pagecache可以提升数据的读取速度</p>
 </li>
-<li>
-<p>因为pagecache容量对比磁盘来说小很多，所以pagecache会淘汰一段时间内没用的数据</p>
+<li><p>因为pagecache容量对比磁盘来说小很多，所以pagecache会淘汰一段时间内没用的数据</p>
 </li>
-<li>
-<p>传输大文件的时候pagecache不适用，因为内存大小有限，而且大文件不是每部分都有用 -&gt; 占用了热点小文件的空间 -&gt; 降低了并发的处理效率</p>
+<li><p>传输大文件的时候pagecache不适用，因为内存大小有限，而且大文件不是每部分都有用 -&gt; 占用了热点小文件的空间 -&gt; 降低了并发的处理效率</p>
 </li>
-<li>
-<p>大文件拷贝不应该占用pagecache, 而零拷贝基于pagecache来实现, 所以, 大文件拷贝不适用零拷贝</p>
+<li><p>大文件拷贝不应该占用pagecache, 而零拷贝基于pagecache来实现, 所以, 大文件拷贝不适用零拷贝</p>
 </li>
-<li>
-<p>大文件传输应该用什么实现？ 首先从传统的文件传输过程来切入<br />
-| 传统的文件传输 |<br />
-| :-----------: |<br />
-| 系统调用read函数 |<br />
-| 内核向磁盘发起IO请求 |<br />
-| 磁盘将数据准备好并向内核发起IO中断 |<br />
-| 内核将数据从磁盘控制缓冲区读取到pagecache中 |<br />
-| 内核将数据从pagecache拷贝到用户缓冲区 |<br />
-| read调用正常返回 |</p>
+<li><p>大文件传输应该用什么实现？ 首先从传统的文件传输过程来切入</p>
+<table>
+<thead>
+<tr>
+<th align="center">传统的文件传输</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">系统调用read函数</td>
+</tr>
+<tr>
+<td align="center">内核向磁盘发起IO请求</td>
+</tr>
+<tr>
+<td align="center">磁盘将数据准备好并向内核发起IO中断</td>
+</tr>
+<tr>
+<td align="center">内核将数据从磁盘控制缓冲区读取到pagecache中</td>
+</tr>
+<tr>
+<td align="center">内核将数据从pagecache拷贝到用户缓冲区</td>
+</tr>
+<tr>
+<td align="center">read调用正常返回</td>
+</tr>
+</tbody></table>
 </li>
-<li>
-<p>上述过程存在的两个问题:  大文件占用了pagecache + read调用过程中阻塞进程</p>
+<li><p>上述过程存在的两个问题:  大文件占用了pagecache + read调用过程中阻塞进程</p>
 </li>
-<li>
-<p>大文件占用了pagecache</p>
+<li><p>大文件占用了pagecache</p>
 <ol>
 <li>内核直接将数据从磁盘控制器缓冲区拷贝到用户缓冲区, 跳过了pagecache</li>
-<li>绕开pagecache的I/O叫做直接I/O; 使用pagecache的I/O叫做缓存I/O</li>
+<li>绕开pagecache的I&#x2F;O叫做直接I&#x2F;O; 使用pagecache的I&#x2F;O叫做缓存I&#x2F;O</li>
 </ol>
 </li>
-<li>
-<p>read调用过程中阻塞进程 -&gt; 使用异步IO来解决, 用户进程发起异步IO读, 内核向磁盘发起读请求, 此时用户进程直接返回执行其他任务</p>
+<li><p>read调用过程中阻塞进程 -&gt; 使用异步IO来解决, 用户进程发起异步IO读, 内核向磁盘发起读请求, 此时用户进程直接返回执行其他任务</p>
 </li>
-<li>
-<p>所以, 针对大文件传输可以使用直接IO + 异步IO的方案来代替零拷贝技术; 对于Nginx来说, 判断文件是否为大文件的依据是: file_size &gt; directio = 1024m, 也就是1G(仅供参考)</p>
+<li><p>所以, 针对大文件传输可以使用直接IO + 异步IO的方案来代替零拷贝技术; 对于Nginx来说, 判断文件是否为大文件的依据是: file_size &gt; directio &#x3D; 1024m, 也就是1G(仅供参考)</p>
 </li>
 </ol>
 
@@ -1323,49 +1325,49 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="../images/hash_table_summary.png" alt="hashtable_summary" /></p>
-<h3 id="记录元素是否出现过"><a class="markdownIt-Anchor" href="#记录元素是否出现过"></a> 记录元素是否出现过</h3>
-<h4 id="两个数组的交集"><a class="markdownIt-Anchor" href="#两个数组的交集"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/intersection-of-two-arrays/">两个数组的交集</a></h4>
-<ol>
+          <p><img src="/../images/hash_table_summary.png" alt="hashtable_summary"></p>
+<h3 id="记录元素是否出现过"><a href="#记录元素是否出现过" class="headerlink" title="记录元素是否出现过"></a>记录元素是否出现过</h3><h4 id="两个数组的交集"><a href="#两个数组的交集" class="headerlink" title="两个数组的交集"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/intersection-of-two-arrays/">两个数组的交集</a></h4><ol>
 <li>思路：利用两个unordered_set，一个用来去重、一个用来去重+查找操作O(1)，最后结果转成vector</li>
 <li>这题不需要排序、不能让数据重复 -&gt; 用unordered_set合适（底层实现是哈希表，读写效率高）</li>
 <li>范围for循环和迭代器可以防止遍历越界</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 时间复杂度O(n + m), 空间复杂度O(n)</span></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">intersection</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums1, vector&lt;<span class="type">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        <span class="function">unordered_set&lt;<span class="type">int</span>&gt; <span class="title">numSet</span><span class="params">(nums<span class="number">1.</span>begin(), nums<span class="number">1.</span>end())</span></span>;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; result;                          <span class="comment">//用set的目的是去重</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="type">int</span> &amp;num : nums2) &#123;</span><br><span class="line">            <span class="keyword">if</span> (numSet.<span class="built_in">find</span>(num) != numSet.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                result.<span class="built_in">insert</span>(num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">vector</span>&lt;<span class="type">int</span>&gt;(result.<span class="built_in">begin</span>(), result.<span class="built_in">end</span>());   <span class="comment">//这里的时间复杂度是O(m)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="快乐数"><a class="markdownIt-Anchor" href="#快乐数"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/happy-number/">快乐数</a></h4>
-<ol>
+
+
+<h4 id="快乐数"><a href="#快乐数" class="headerlink" title="快乐数"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/happy-number/">快乐数</a></h4><ol>
 <li>思路：实现快乐数的计算方法，使用unordered_set查找计算结果是否出现过，如果出现过要及时退出，避免程序死循环</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">//快乐数的计算</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getSum</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n) &#123;</span><br><span class="line">            sum += (n % <span class="number">10</span>) * (n % <span class="number">10</span>);</span><br><span class="line">            n /= <span class="number">10</span>;</span><br><span class="line">        &#125;        </span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isHappy</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; happySet;</span><br><span class="line">        <span class="keyword">while</span> (n) &#123;</span><br><span class="line">            <span class="type">int</span> sum = <span class="built_in">getSum</span>(n);</span><br><span class="line">            <span class="keyword">if</span> (sum == <span class="number">1</span>) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            n = sum;</span><br><span class="line">            <span class="comment">// 这里加入set是为了防止无限循环</span></span><br><span class="line">            <span class="keyword">if</span> (happySet.<span class="built_in">find</span>(sum) != happySet.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            happySet.<span class="built_in">insert</span>(sum);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="两数之和"><a class="markdownIt-Anchor" href="#两数之和"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/two-sum/description/">两数之和</a></h4>
-<ol>
+
+
+<h4 id="两数之和"><a href="#两数之和" class="headerlink" title="两数之和"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/two-sum/description/">两数之和</a></h4><ol>
 <li>思路：使用unordered_map存储已遍历过的键值对，遍历数组nums[i]，并查询target-nums[i]是否出现在umap中，如果出现，说明找到了和为target的两个元素</li>
 <li>边找边加入更方便，不用考虑不同索引的元素相同的情况</li>
 <li>{}也是数组，结果可以直接返回花括号</li>
-<li>关于哈希容器的选择
-<ol>
+<li>关于哈希容器的选择<ol>
 <li>因为要返回索引，所以要存储键值对，一定要在3种map里面选一种</li>
 <li>统计两数之和，只需要关注target-nums[i]和nums[i]，所以顺序不重要，为了获得更好的查找效率，选择unordered_map是最合适的</li>
 </ol>
 </li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">twoSum</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> target)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; umap; <span class="comment">//数值-索引</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); ++i) &#123;      <span class="comment">//边找边加最方便</span></span><br><span class="line">            <span class="keyword">auto</span> idx = umap.<span class="built_in">find</span>(target - nums[i]);  <span class="comment">//find返回的是指向所找元素的迭代器</span></span><br><span class="line">            <span class="keyword">if</span> (idx != umap.<span class="built_in">end</span>()) &#123;</span><br><span class="line">                <span class="keyword">return</span> &#123;idx-&gt;second, i&#125;;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            umap.<span class="built_in">insert</span>(<span class="built_in">make_pair</span>(nums[i], i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="记录元素出现的次数"><a class="markdownIt-Anchor" href="#记录元素出现的次数"></a> 记录元素出现的次数</h3>
-<h4 id="有效的字母异位词"><a class="markdownIt-Anchor" href="#有效的字母异位词"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-anagram/description/">有效的字母异位词</a></h4>
-<ol>
+
+<h3 id="记录元素出现的次数"><a href="#记录元素出现的次数" class="headerlink" title="记录元素出现的次数"></a>记录元素出现的次数</h3><h4 id="有效的字母异位词"><a href="#有效的字母异位词" class="headerlink" title="有效的字母异位词"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-anagram/description/">有效的字母异位词</a></h4><ol>
 <li>思路：数组做哈希表；加法统计s各字母出现的次数、减法统计t各字母出现的次数，如果最后数组元素不全为0说明构成st的字母不相同</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isAnagram</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> letter[<span class="number">26</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            ++letter[s[i] - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; t.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            --letter[t[i] - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (letter[i] != <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="赎金信"><a class="markdownIt-Anchor" href="#赎金信"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/ransom-note/description/">赎金信</a></h4>
-<ol>
+
+
+<h4 id="赎金信"><a href="#赎金信" class="headerlink" title="赎金信"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/ransom-note/description/">赎金信</a></h4><ol>
 <li>思路：加法统计magazine里面字母出现的个数，减法统计ransomNote里面字母出现的个数，如果最终结果出现负数说明magazine无法构成ransomNote</li>
 <li>固定大小的哈希表可以选用数组，数组相对于map来说不用维护红黑树不用做哈希映射，更简单直接</li>
 <li>可以将遍历数组和遍历ransomNote结合起来，因为只要出现了一个负数，程序就可以返回结果了</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">canConstruct</span><span class="params">(string ransomNote, string magazine)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> letter[<span class="number">26</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        <span class="keyword">if</span> (magazine.<span class="built_in">size</span>() &lt; ransomNote.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">//剪枝</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;mag : magazine) &#123;</span><br><span class="line">            ++letter[mag - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">const</span> <span class="keyword">auto</span> &amp;ran : ransomNote) &#123;</span><br><span class="line">            --letter[ran - <span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">            <span class="keyword">if</span> (letter[ran - <span class="string">&#x27;a&#x27;</span>] &lt; <span class="number">0</span>) &#123; <span class="comment">//这里直接判断就好, 只要有负数就可以退出了</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="四数相加ii"><a class="markdownIt-Anchor" href="#四数相加ii"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/4sum-ii/">四数相加Ⅱ</a></h4>
-<ol>
-<li>思路：数组之间是固定的，所以可以把ABCD四数相加拆成两两相加比较结果(A+B=-C-D)，最终看等号两边匹配成功的次数</li>
+
+
+<h4 id="四数相加Ⅱ"><a href="#四数相加Ⅱ" class="headerlink" title="四数相加Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/4sum-ii/">四数相加Ⅱ</a></h4><ol>
+<li>思路：数组之间是固定的，所以可以把ABCD四数相加拆成两两相加比较结果(A+B&#x3D;-C-D)，最终看等号两边匹配成功的次数</li>
 <li>哈希表的选择：因为find只会找一次，如果使用multiset的话虽然可以记录重复的两元素和，但是find只会匹配一次，后面就算有重复的值也不会被记录；所以这题需要用unordered_map去记录元素和+出现次数；使用find一次匹配就把组合数给统计完全</li>
 <li>取负数的逻辑可以用0-，看起来比x(-1)更直观</li>
 </ol>
@@ -1442,59 +1444,57 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="../images/string_summary.png" alt="string_summary" /></p>
-<h3 id="修改字符串"><a class="markdownIt-Anchor" href="#修改字符串"></a> 修改字符串</h3>
-<h4 id="反转字符串"><a class="markdownIt-Anchor" href="#反转字符串"></a> 反转字符串</h4>
-<ol>
+          <p><img src="/../images/string_summary.png" alt="string_summary"></p>
+<h3 id="修改字符串"><a href="#修改字符串" class="headerlink" title="修改字符串"></a>修改字符串</h3><h4 id="反转字符串"><a href="#反转字符串" class="headerlink" title="反转字符串"></a>反转字符串</h4><ol>
 <li>思路：swap函数+双指针</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">reverse</span><span class="params">(vector&lt;<span class="type">char</span>&gt; &amp;vec, <span class="type">int</span> lo, <span class="type">int</span> hi)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = lo, j = hi; i &lt; j; ++i, --j) &#123;</span><br><span class="line">            <span class="built_in">swap</span>(vec[i], vec[j]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">reverseString</span><span class="params">(vector&lt;<span class="type">char</span>&gt;&amp; s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">reverse</span>(s, <span class="number">0</span>, s.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="反转字符串ii"><a class="markdownIt-Anchor" href="#反转字符串ii"></a> 反转字符串Ⅱ</h4>
-<ol>
-<li>思路：指针每次的步长设置为2 * k就可以，每次判断i + k是否满足条件，i + k &lt;= s.size()的时候翻转k个字符，i + k &gt; s.size()的时候翻转到最后一个字符</li>
-<li>步长设置为i += 2*k的话（if语句的判断逻辑也是），可以让程序更直观，但是要注意reverse的区间是左闭右开的，也就是说右边界是取不到的，所以实际reverse的时候记得-1</li>
+
+
+<h4 id="反转字符串Ⅱ"><a href="#反转字符串Ⅱ" class="headerlink" title="反转字符串Ⅱ"></a>反转字符串Ⅱ</h4><ol>
+<li>思路：指针每次的步长设置为2 * k就可以，每次判断i + k是否满足条件，i + k &lt;&#x3D; s.size()的时候翻转k个字符，i + k &gt; s.size()的时候翻转到最后一个字符</li>
+<li>步长设置为i +&#x3D; 2*k的话（if语句的判断逻辑也是），可以让程序更直观，但是要注意reverse的区间是左闭右开的，也就是说右边界是取不到的，所以实际reverse的时候记得-1</li>
 <li>if 语句处理剩余位数够翻转k位的情况，剩下语句处理不足k位的情况</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">reverse</span><span class="params">(string &amp;vec, <span class="type">int</span> lo, <span class="type">int</span> hi)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = lo, j = hi; i &lt; j; ++i, --j) &#123;</span><br><span class="line">            <span class="built_in">swap</span>(vec[i], vec[j]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">reverseStr</span><span class="params">(string s, <span class="type">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i += <span class="number">2</span> * k) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i + k &lt;= s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                <span class="built_in">reverse</span>(s, i, i + k - <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">continue</span>; <span class="comment">//这里要记得不能两个reverse都执行</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">reverse</span>(s, i, s.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="替换数字"><a class="markdownIt-Anchor" href="#替换数字"></a> 替换数字</h4>
-<ol>
+
+
+<h4 id="替换数字"><a href="#替换数字" class="headerlink" title="替换数字"></a>替换数字</h4><ol>
 <li>思路：统计有多少个数字，扩容后从后往前遍历（不用移动后继元素）</li>
-<li>两个并列的循环，复杂度是O(n) + O(n) = O(n)，嵌套也不一定就是O(n^2)</li>
-<li>申请一个新的数组写法
-<ol>
+<li>两个并列的循环，复杂度是O(n) + O(n) &#x3D; O(n)，嵌套也不一定就是O(n^2)</li>
+<li>申请一个新的数组写法<ol>
 <li>碰到数字替换成number，注意索引让for循环控制就好了</li>
 <li>如果需要自己控制expression中的变量，改变这个变量以后一定要检查</li>
 </ol>
 </li>
-<li>复用原字符数组的写法
-<ol>
+<li>复用原字符数组的写法<ol>
 <li>先扩容，这题是计算有多少个数字，并根据数字的个数进行扩容</li>
 <li>从后往前遍历并替换，从后往前替换不需要把后继元素后移</li>
 </ol>
 </li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    string s;</span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] &gt;= <span class="string">&#x27;0&#x27;</span> &amp;&amp; s[i] &lt;= <span class="string">&#x27;9&#x27;</span>) &#123;</span><br><span class="line">            ++count;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> i = s.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">    s.<span class="built_in">resize</span>(s.<span class="built_in">size</span>() + <span class="number">5</span> * count);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = s.<span class="built_in">size</span>() - <span class="number">1</span>; j &gt;= <span class="number">0</span>; ) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] &gt;= <span class="string">&#x27;0&#x27;</span> &amp;&amp; s[i] &lt;= <span class="string">&#x27;9&#x27;</span>) &#123;</span><br><span class="line">            s[j--] = <span class="string">&#x27;r&#x27;</span>;</span><br><span class="line">            s[j--] = <span class="string">&#x27;e&#x27;</span>;</span><br><span class="line">            s[j--] = <span class="string">&#x27;b&#x27;</span>;</span><br><span class="line">            s[j--] = <span class="string">&#x27;m&#x27;</span>;</span><br><span class="line">            s[j--] = <span class="string">&#x27;u&#x27;</span>;</span><br><span class="line">            s[j--] = <span class="string">&#x27;n&#x27;</span>;</span><br><span class="line">            --i;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            s[j--] = s[i--];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; s &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="翻转字符串中的单词"><a class="markdownIt-Anchor" href="#翻转字符串中的单词"></a> 翻转字符串中的单词</h4>
-<ol>
+
+
+<h4 id="翻转字符串中的单词"><a href="#翻转字符串中的单词" class="headerlink" title="翻转字符串中的单词"></a>翻转字符串中的单词</h4><ol>
 <li>思路：去除多余空格后，先翻转整个字符串，然后用空格分段翻转单词</li>
 <li>去除多余空格的时候， 不要考虑前后，就考虑当前位置的元素是空格还是非空格，非空格就一次性加入</li>
 <li>翻转单个单词的时候，翻转右边界是空格前，翻转左边界是空格后</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">myReverse</span><span class="params">(string &amp;s, <span class="type">int</span> lo, <span class="type">int</span> hi)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = lo, j = hi; i &lt; j; ++i, --j) &#123;</span><br><span class="line">            <span class="built_in">swap</span>(s[i], s[j]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">removeExtraSpaces</span><span class="params">(string &amp;s)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; s.<span class="built_in">size</span>(); ++j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (i != <span class="number">0</span>) s[i++] = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">                <span class="keyword">while</span> (s[j] != <span class="string">&#x27; &#x27;</span> &amp;&amp; j &lt; s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                    s[i++] = s[j++];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        s.<span class="built_in">resize</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">reverseWords</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">removeExtraSpaces</span>(s);</span><br><span class="line">        <span class="built_in">myReverse</span>(s, <span class="number">0</span>, s.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= s.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[i] == <span class="string">&#x27; &#x27;</span> || i == s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                <span class="built_in">myReverse</span>(s, start, i - <span class="number">1</span>);</span><br><span class="line">                start = i + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="右旋字符串"><a class="markdownIt-Anchor" href="#右旋字符串"></a> 右旋字符串</h4>
-<ol>
+
+
+<h4 id="右旋字符串"><a href="#右旋字符串" class="headerlink" title="右旋字符串"></a>右旋字符串</h4><ol>
 <li>思路：先整体翻转，再根据给定的k值为边界分成两个子串，翻转两个子串</li>
 <li>如果按照k来切割，要注意区间是左闭右开的<code>[0, k)</code>和<code>[k, s.size())</code></li>
 <li>所以实际翻转的时候区间是<code>[0, k-1]</code>和<code>[k, s.size()-1]</code></li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">myReverse</span><span class="params">(string &amp;s, <span class="type">int</span> lo, <span class="type">int</span> hi)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = lo, j = hi; i &lt; j; ++i, --j) &#123;</span><br><span class="line">        <span class="built_in">swap</span>(s[i], s[j]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> k;</span><br><span class="line">    string s;</span><br><span class="line">    cin &gt;&gt; k;</span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">myReverse</span>(s, <span class="number">0</span>, s.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">myReverse</span>(s, <span class="number">0</span>, k - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">myReverse</span>(s, k, s.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; s &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="字符串与模式串的匹配"><a class="markdownIt-Anchor" href="#字符串与模式串的匹配"></a> 字符串与模式串的匹配</h3>
-<h4 id="实现strstr"><a class="markdownIt-Anchor" href="#实现strstr"></a> 实现strStr()</h4>
-<ol>
+
+<h3 id="字符串与模式串的匹配"><a href="#字符串与模式串的匹配" class="headerlink" title="字符串与模式串的匹配"></a>字符串与模式串的匹配</h3><h4 id="实现strStr"><a href="#实现strStr" class="headerlink" title="实现strStr()"></a>实现strStr()</h4><ol>
 <li>思路：使用KMP算法构造next数组匹配模式串，匹配成功就用当前元素索引-模式串长度得到开始位置索引</li>
 <li>KMP算法，找到最长相等前后缀，直接跳转到前面几位字母和当前元素相同的元素，避免从头遍历</li>
-<li>关于next数组
-<ol>
+<li>关于next数组<ol>
 <li>记录next数组，next数组记录的是截至到索引为i的子串最长相等前后缀长度，也是要跳转元素的下标</li>
 <li>next数组最大的作用就是，当模式串与文本串不匹配的时候，回退到最近可重新匹配的位置</li>
 <li>前缀就是不包含最后一个字符，所有以第一个字符为开始的连续子串；后缀就是不包含第一个字符，所有以最后一个字符结尾的连续子串</li>
@@ -1503,8 +1503,9 @@
 <li>KMP算法的意义在于将模式串的匹配问题从暴力解法的O(nxm)变成了O(n+m)，这里m指的是构造next数组的花费，n是实际匹配的花费</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">getNext</span><span class="params">(<span class="type">int</span> *next, <span class="type">const</span> string &amp;s)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> j = <span class="number">0</span>;</span><br><span class="line">        next[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; s.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">while</span> (j &gt; <span class="number">0</span> &amp;&amp; s[i] != s[j]) &#123;</span><br><span class="line">                j = next[j - <span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (s[i] == s[j]) &#123;</span><br><span class="line">                ++j;</span><br><span class="line">            &#125;</span><br><span class="line">            next[i] = j;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">strStr</span><span class="params">(string haystack, string needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (needle.<span class="built_in">size</span>() == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">next</span><span class="params">(needle.size(), <span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="built_in">getNext</span>(&amp;next[<span class="number">0</span>], needle);</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> j = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; haystack.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">while</span> (j &gt; <span class="number">0</span> &amp;&amp; haystack[i] != needle[j]) &#123;</span><br><span class="line">                j = next[j - <span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (haystack[i] == needle[j]) &#123;</span><br><span class="line">                ++j;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j == needle.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                <span class="keyword">return</span> i - needle.<span class="built_in">size</span>() + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="重复的子字符串"><a class="markdownIt-Anchor" href="#重复的子字符串"></a> 重复的子字符串</h4>
-<ol>
+
+
+<h4 id="重复的子字符串"><a href="#重复的子字符串" class="headerlink" title="重复的子字符串"></a>重复的子字符串</h4><ol>
 <li>思路：KMP算法，最长相等前后缀中不包含的子串长度如果能够被整个字符串的长度整除，这个子串就能够重复构成整个字符串</li>
 <li>思路Ⅱ：将字符串重复拼接起来，去掉首尾元素能够在中间发现原字符串说明原字符串是由某个子串构成的</li>
 </ol>
@@ -1581,51 +1582,54 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="../images/array_summary.png" alt="array_summary" /></p>
-<h3 id="数组查找"><a class="markdownIt-Anchor" href="#数组查找"></a> 数组查找</h3>
-<h4 id="二分查找"><a class="markdownIt-Anchor" href="#二分查找"></a> 二分查找</h4>
-<ol>
+          <p><img src="/../images/array_summary.png" alt="array_summary"></p>
+<h3 id="数组查找"><a href="#数组查找" class="headerlink" title="数组查找"></a>数组查找</h3><h4 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h4><ol>
 <li>思路：有序数组每次找中间点，大了在左区间继续找，小了在右区间继续找，必须分离开不满足条件的点</li>
-<li>为什么这里一定要&lt;=？ - 不一定，但是统一选&lt;=
-<ol>
-<li>&lt;= 是定义了一个左闭右闭区间；坚持左闭右闭，最后可以缩小成一个点，例如，<code>[1, 1]</code>，right是可以取到的，所以要把不满足条件的点分离开不加入下一次查找（right = mid - 1）</li>
-<li>&lt; 是定义了一个左闭右开区间，如果是左闭右开&lt;，right是取不到的（right = mid），例如，<code>[1, 1)</code>这是个有问题的区间，所以right要是取不到的点，例如，<code>[1, 2)</code></li>
+<li>为什么这里一定要&lt;&#x3D;？ - 不一定，但是统一选&lt;&#x3D;<ol>
+<li>&lt;&#x3D; 是定义了一个左闭右闭区间；坚持左闭右闭，最后可以缩小成一个点，例如，<code>[1, 1]</code>，right是可以取到的，所以要把不满足条件的点分离开不加入下一次查找（right &#x3D; mid - 1）</li>
+<li>&lt; 是定义了一个左闭右开区间，如果是左闭右开&lt;，right是取不到的（right &#x3D; mid），例如，<code>[1, 1)</code>这是个有问题的区间，所以right要是取不到的点，例如，<code>[1, 2)</code></li>
 </ol>
 </li>
 <li>二分查找的条件是有序+不重复数组</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">search</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> left = <span class="number">0</span>, right = nums.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 左闭右闭区间</span></span><br><span class="line">        <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">            <span class="type">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">                left = mid + <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">                right = mid - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="长度最小的子数组"><a class="markdownIt-Anchor" href="#长度最小的子数组"></a> 长度最小的子数组</h4>
-<ol>
+
+
+<h4 id="长度最小的子数组"><a href="#长度最小的子数组" class="headerlink" title="长度最小的子数组"></a>长度最小的子数组</h4><ol>
 <li>思路：滑动窗口内统计元素之和，右边界加入元素，左边界弹出元素（弹出之前要统计最小窗口值和重新计算窗口元素和）</li>
 <li>缩小窗口的过程必须写成while循环，因为窗口内的总和大于target可以继续缩小</li>
 <li>注意这题是找子数组，所以不能排序</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minSubArrayLen</span><span class="params">(<span class="type">int</span> target, vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> result = INT_MAX;</span><br><span class="line">        <span class="type">int</span> subLength = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; nums.<span class="built_in">size</span>(); ++j) &#123;</span><br><span class="line">            sum += nums[j];</span><br><span class="line">            <span class="keyword">while</span> (target &lt;= sum) &#123;       <span class="comment">//注意这里用while循环, 窗口缩小直到小于target</span></span><br><span class="line">                subLength = j - i + <span class="number">1</span>;    <span class="comment">//有效窗口最小值在这里统计</span></span><br><span class="line">                result = result &lt; subLength ? result : subLength;    <span class="comment">//统计窗口最小值</span></span><br><span class="line">                sum -= nums[i++];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result == INT_MAX ? <span class="number">0</span> : result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="区间和"><a class="markdownIt-Anchor" href="#区间和"></a> 区间和</h4>
-<ol>
+
+
+<h4 id="区间和"><a href="#区间和" class="headerlink" title="区间和"></a>区间和</h4><ol>
 <li>思路：输入的时候就去求前缀和，并形成新的数组，要输出区间和就用右区间前缀和-左边界之前区间前缀和，时间复杂度是O(n+q)，q是查询次数</li>
 <li>如果每次都对区间进行重复求和，时间复杂度是O(n*m)m，m是查询次数（会超时）</li>
 <li>scanf、printf性能更高，可格式化输入输出，适用于大规模数据读取输出操作；cin、cout是标准库函数，更直观、支持操作符&gt;&gt;和&lt;&lt;重载，适用于小规模数据读取输出操作</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">nums</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">p</span><span class="params">(n)</span></span>;</span><br><span class="line">        </span><br><span class="line">    <span class="type">int</span> presum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        cin &gt;&gt; nums[i];</span><br><span class="line">        presum += nums[i];</span><br><span class="line">        p[i] = presum;</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> start, end;</span><br><span class="line">    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;start, &amp;end)) &#123;  <span class="comment">//~按位取反</span></span><br><span class="line">        <span class="type">int</span> sum;                            <span class="comment">//如果scanf没有扫描到值会返回EOF(-1), 按位取反就是0, 跳出循环</span></span><br><span class="line">        <span class="keyword">if</span> (start == <span class="number">0</span>) &#123;</span><br><span class="line">            sum = p[end];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            sum = p[end] - p[start - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, sum);</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="数组修改"><a class="markdownIt-Anchor" href="#数组修改"></a> 数组修改</h3>
-<h4 id="移除元素"><a class="markdownIt-Anchor" href="#移除元素"></a> 移除元素</h4>
-<ol>
+
+
+
+
+<h3 id="数组修改"><a href="#数组修改" class="headerlink" title="数组修改"></a>数组修改</h3><h4 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h4><ol>
 <li>思路：快慢指针，快指针为目标值的时候直接自增，为非目标值的时候赋值给慢指针然后移动慢指针</li>
 <li>快慢指针可以把一个数组当成两个来用，因为慢指针永远追不上快指针，最后的结果返回慢指针就行</li>
 <li>数组删除元素本身就不是真的删除，而是调整自己有效区间的大小，值还在那个内存里，只是不属于数组了</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">removeElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> slowIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> fastIndex = <span class="number">0</span>; fastIndex &lt; nums.<span class="built_in">size</span>(); ++fastIndex) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[fastIndex] != val) &#123;</span><br><span class="line">                nums[slowIndex++] = nums[fastIndex];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> slowIndex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="有序数组的平方"><a class="markdownIt-Anchor" href="#有序数组的平方"></a> 有序数组的平方</h4>
-<ol>
+
+
+<h4 id="有序数组的平方"><a href="#有序数组的平方" class="headerlink" title="有序数组的平方"></a>有序数组的平方</h4><ol>
 <li>思路：快慢指针，快指针遍历，慢指针计算平方；记得平方后元素顺序要调整</li>
 <li>排序可以sort，这里复习一下快排</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">part</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;vec, <span class="type">int</span> low, <span class="type">int</span> high)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> i = low, j = high, pivot = vec[low];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="keyword">while</span> (i &lt; j &amp;&amp; vec[j] &gt; pivot) &#123;</span><br><span class="line">                --j;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i &lt; j) &#123;</span><br><span class="line">                <span class="built_in">swap</span>(vec[i++], vec[j]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (i &lt; j &amp;&amp; vec[i] &lt;= pivot) &#123;</span><br><span class="line">                ++i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i &lt; j) &#123;</span><br><span class="line">                <span class="built_in">swap</span>(vec[i], vec[j--]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">quickSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;vec, <span class="type">int</span> low, <span class="type">int</span> high)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (low &lt; high) &#123;</span><br><span class="line">            <span class="type">int</span> mid = <span class="built_in">part</span>(vec, low, high);</span><br><span class="line">            <span class="built_in">quickSort</span>(vec, low, mid - <span class="number">1</span>);</span><br><span class="line">            <span class="built_in">quickSort</span>(vec, mid + <span class="number">1</span>, high);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">sortedSquares</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> slowIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> fastIndex = <span class="number">0</span>; fastIndex &lt; nums.<span class="built_in">size</span>(); ++fastIndex) &#123;</span><br><span class="line">            nums[slowIndex++] = nums[fastIndex] * nums[fastIndex]; </span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">quickSort</span>(nums, <span class="number">0</span>, nums.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> nums;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="螺旋矩阵ii"><a class="markdownIt-Anchor" href="#螺旋矩阵ii"></a> 螺旋矩阵Ⅱ</h4>
-<ol>
-<li>思路：从1-n^2构成螺旋矩阵总共需要n / 2圈，每次都选择左闭右开区间，顺时针转动；如果n是奇数则额外处理最中心的位置</li>
+
+
+<h4 id="螺旋矩阵Ⅱ"><a href="#螺旋矩阵Ⅱ" class="headerlink" title="螺旋矩阵Ⅱ"></a>螺旋矩阵Ⅱ</h4><ol>
+<li>思路：从1-n^2构成螺旋矩阵总共需要n &#x2F; 2圈，每次都选择左闭右开区间，顺时针转动；如果n是奇数则额外处理最中心的位置</li>
 <li>最外层要有loop来控制圈数，内层要有4个for循环来控制旋转的4个方向</li>
 <li>起始位置和偏移量都是基于矩阵位置来计算的，考察对元素位置的访问</li>
 <li>选好了填充元素的区间（比如左闭右开）4个方向都要遵循左闭右开，中途更换很容易乱</li>
