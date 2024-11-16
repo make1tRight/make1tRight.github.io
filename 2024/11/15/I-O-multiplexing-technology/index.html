@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll最基本的Socket模型 Socket &#x3D; IP + Port 服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)  如何服务更多用户? C10K问题, 就是能否支持并发1万请求 单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改">
+  <meta name="description" content="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll  最基本的Socket模型  Socket &#x3D; IP + Port 服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)   如何服务更多用户?  C10K问题, 就是能否支持并发1万请求 单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改  12345# 查询uli">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Computer System | I&#x2F;O multiplexing technology">
 <meta property="og:url" content="http://example.com/2024/11/15/I-O-multiplexing-technology/index.html">
 <meta property="og:site_name" content="Make it right.">
-<meta property="og:description" content="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll最基本的Socket模型 Socket &#x3D; IP + Port 服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)  如何服务更多用户? C10K问题, 就是能否支持并发1万请求 单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改">
+<meta property="og:description" content="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll  最基本的Socket模型  Socket &#x3D; IP + Port 服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)   如何服务更多用户?  C10K问题, 就是能否支持并发1万请求 单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改  12345# 查询uli">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-11-15T06:58:49.000Z">
 <meta property="article:modified_time" content="2024-11-15T07:03:50.166Z">
@@ -209,104 +209,97 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="I-O多路复用-select-poll-epoll"><a href="#I-O多路复用-select-poll-epoll" class="headerlink" title="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll"></a>I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</h2><h3 id="最基本的Socket模型"><a href="#最基本的Socket模型" class="headerlink" title="最基本的Socket模型"></a>最基本的Socket模型</h3><ol>
-<li>Socket &#x3D; IP + Port</li>
+        <h2 id="io多路复用-selectpollepoll"><a class="markdownIt-Anchor" href="#io多路复用-selectpollepoll"></a> I/O多路复用: select/poll/epoll</h2>
+<h3 id="最基本的socket模型"><a class="markdownIt-Anchor" href="#最基本的socket模型"></a> 最基本的Socket模型</h3>
+<ol>
+<li>Socket = IP + Port</li>
 <li>服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)</li>
 </ol>
-<h3 id="如何服务更多用户"><a href="#如何服务更多用户" class="headerlink" title="如何服务更多用户?"></a>如何服务更多用户?</h3><ol>
+<h3 id="如何服务更多用户"><a class="markdownIt-Anchor" href="#如何服务更多用户"></a> 如何服务更多用户?</h3>
+<ol>
 <li>C10K问题, 就是能否支持并发1万请求</li>
 <li>单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询</span></span><br><span class="line"><span class="built_in">ulimit</span> -n </span><br><span class="line"></span><br><span class="line"><span class="comment"># 设定为m</span></span><br><span class="line"><span class="built_in">ulimit</span> -n m</span><br></pre></td></tr></table></figure>
-
-<h3 id="多进程模型"><a href="#多进程模型" class="headerlink" title="多进程模型"></a>多进程模型</h3><ol>
-<li><p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型</p>
-<table>
-<thead>
-<tr>
-<th>多进程模型(父进程负责监听, 子进程负责处理业务)</th>
-<th>多线程模型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>server在LISTEN状态下, 客户端发起connect</td>
-<td>与多进程模型相同</td>
-</tr>
-<tr>
-<td>服务端accept</td>
-<td>与多进程模型相同</td>
-</tr>
-<tr>
-<td>应用父进程fork一个子进程</td>
-<td>pthread_create()创建新的线程</td>
-</tr>
-<tr>
-<td>子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息)</td>
-<td>在线程中实现与客户端的数据交换</td>
-</tr>
-<tr>
-<td>子进程专门处理数据的读写、父进程继续监听socket</td>
-<td>-</td>
-</tr>
-<tr>
-<td>如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换</td>
-<td>-</td>
-</tr>
-</tbody></table>
+<h3 id="多进程模型"><a class="markdownIt-Anchor" href="#多进程模型"></a> 多进程模型</h3>
+<ol>
+<li>
+<p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型<br />
+| 多进程模型(父进程负责监听, 子进程负责处理业务) | 多线程模型 |<br />
+| --------- | --------- |<br />
+| server在LISTEN状态下, 客户端发起connect | 与多进程模型相同 |<br />
+| 服务端accept | 与多进程模型相同 |<br />
+| 应用父进程fork一个子进程 | pthread_create()创建新的线程 |<br />
+| 子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息) | 在线程中实现与客户端的数据交换 |<br />
+| 子进程专门处理数据的读写、父进程继续监听socket | - |<br />
+| 如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换 | - |</p>
 </li>
-<li><p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
+<li>
+<p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
 </li>
-<li><p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
+<li>
+<p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
 </li>
-<li><p>另外，父进程要通过调用wait()&#x2F;pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
+<li>
+<p>另外，父进程要通过调用wait()/pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
 </li>
 </ol>
-<h3 id="多线程模型"><a href="#多线程模型" class="headerlink" title="多线程模型"></a>多线程模型</h3><ol>
+<h3 id="多线程模型"><a class="markdownIt-Anchor" href="#多线程模型"></a> 多线程模型</h3>
+<ol>
 <li>因为多进程模型在使用过程中，进程的上下文切换开销特别大，所以需要更小开销的多线程模型</li>
 <li>多线程模型的优势在于，线程共享进程的代码、全局数据、进程空间、文件描述符列表、堆、共享库等资源  -&gt; 切换线程的时候只需要复制寄存器、线程私有数据等专属资源，开销更小、速度更快</li>
-<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源<ol>
+<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源
+<ol>
 <li>可以启用线程池，在建立连接之前就将线程创建好</li>
 <li>从全连接队列（ESTABLISHED）中取出全连接对象-&gt;进行数据交换 -&gt; 数据交换结束后也不需要释放对应线程，放回到线程池里即可</li>
 </ol>
 </li>
 </ol>
-<h4 id="I-O多路复用"><a href="#I-O多路复用" class="headerlink" title="I&#x2F;O多路复用"></a>I&#x2F;O多路复用</h4><ol>
-<li>要实现C10K，单纯使用多线程&#x2F;多进程模型意味着需要1w个线程&#x2F;进程，现在自己的电脑也才32线程</li>
+<h4 id="io多路复用"><a class="markdownIt-Anchor" href="#io多路复用"></a> I/O多路复用</h4>
+<ol>
+<li>要实现C10K，单纯使用多线程/多进程模型意味着需要1w个线程/进程，现在自己的电脑也才32线程</li>
 <li>IO多路复用技术类似于CPU的并发技术，对每个socket都分配一个时间片，到期以后切换下一个socket，看起来就像是同时处理了多个socket（也叫时分多路复用技术）</li>
-<li>常见的IO复用技术就是select&#x2F;poll和epoll（看todolist2-day60）<ol>
-<li>select&#x2F;poll都要遍历文件描述符列表去检查哪些socket可读&#x2F;可写；select&#x2F;poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读&#x2F;可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
+<li>常见的IO复用技术就是select/poll和epoll（看todolist2-day60）
+<ol>
+<li>select/poll都要遍历文件描述符列表去检查哪些socket可读/可写；select/poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读/可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
 <li>epoll维护红黑树[时间复杂度<code>O(logn)</code>]+链表，能够解决C10K问题</li>
 </ol>
 </li>
-<li>边缘触发和水平触发 - select&#x2F;poll只支持LT水平触发，epoll支持LT和ET两种</li>
+<li>边缘触发和水平触发 - select/poll只支持LT水平触发，epoll支持LT和ET两种</li>
 </ol>
-<h5 id="Linux下的三种IO复用方式：epoll、select和poll"><a href="#Linux下的三种IO复用方式：epoll、select和poll" class="headerlink" title="Linux下的三种IO复用方式：epoll、select和poll"></a>Linux下的三种IO复用方式：epoll、select和poll</h5><ol>
-<li>select:<ol>
+<h5 id="linux下的三种io复用方式epoll-select和poll"><a class="markdownIt-Anchor" href="#linux下的三种io复用方式epoll-select和poll"></a> Linux下的三种IO复用方式：epoll、select和poll</h5>
+<ol>
+<li>select:
+<ol>
 <li>所有文件描述符在用户态被加入其文件描述符集合，每次调用都需要将整个集合拷贝到内核态</li>
 <li>使用线性表描述文件描述符集合，文件描述符有上限</li>
 <li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
 <li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
 </ol>
 </li>
-<li>poll:<ol>
+<li>poll:
+<ol>
 <li>所有文件描述符都是在用户态被加入其文件描述符集合的，每次调用都需要将整个集合拷贝到内核态</li>
 <li>使用链表来描述文件描述符集合</li>
 <li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
 <li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
 </ol>
 </li>
-<li>epoll:<ol>
+<li>epoll:
+<ol>
 <li>将整个文件描述符集合维护在内核态，每次添加文件描述符的时候都需要执行一个系统调用(系统调用的开销很大， 因此在有很多短期活跃连接的情况下，epoll可能会慢于select和poll)</li>
-<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可<ol>
+<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可
+<ol>
 <li>待检测的socket加入到自己维护的红黑树中</li>
 <li>epoll_wait从链表中取出已经就绪的socket</li>
 <li>红黑树的增删改时间复杂度是O(logn)比bitsmap和动态数组的O(n)效率更高</li>
-<li>不用去遍历哪个可读&#x2F;可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
+<li>不用去遍历哪个可读/可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
 <li>另外，epoll仍旧需要把数据从内核态拷贝到用户态</li>
 </ol>
 </li>
 <li>不需要遍历整个文件描述符集合，当有活动产生时，会自动触发epoll回调函数通知epoll文件描述符，然后内核将这些就绪的文件描述符放到之前提到的ready list中等待epoll_wait调用后被处理</li>
-<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)<ol>
+<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)
+<ol>
 <li>LT会去遍历在epoll事件表中每个文件描述符，来观察是否有我们感兴趣的事件发生，如果有（触发了该文件描述符上的回调函数），epoll_wait就会以非阻塞的方式返回。若该epoll事件没有被处理完（没有返回EWOULDBLOCK），该事件还会被后续的epoll_wait再次触发</li>
 <li>ET在发现有我们感兴趣的事件发生后，立即返回，并且sleep这一事件的epoll_wait，不管该事件有没有结束 -&gt; 使用ET模式必须保证fd是非阻塞的，每次调用read和write的时候都必须等到他们返回EWOULDBLOCK</li>
 </ol>
@@ -399,7 +392,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-select-poll-epoll"><span class="nav-number">1.</span> <span class="nav-text">I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84Socket%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">最基本的Socket模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9C%8D%E5%8A%A1%E6%9B%B4%E5%A4%9A%E7%94%A8%E6%88%B7"><span class="nav-number">1.2.</span> <span class="nav-text">如何服务更多用户?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">多进程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.</span> <span class="nav-text">多线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">I&#x2F;O多路复用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux%E4%B8%8B%E7%9A%84%E4%B8%89%E7%A7%8DIO%E5%A4%8D%E7%94%A8%E6%96%B9%E5%BC%8F%EF%BC%9Aepoll%E3%80%81select%E5%92%8Cpoll"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">Linux下的三种IO复用方式：epoll、select和poll</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-selectpollepoll"><span class="nav-number">1.</span> <span class="nav-text"> I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84socket%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text"> 最基本的Socket模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9C%8D%E5%8A%A1%E6%9B%B4%E5%A4%9A%E7%94%A8%E6%88%B7"><span class="nav-number">1.2.</span> <span class="nav-text"> 如何服务更多用户?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text"> 多进程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.</span> <span class="nav-text"> 多线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text"> I&#x2F;O多路复用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#linux%E4%B8%8B%E7%9A%84%E4%B8%89%E7%A7%8Dio%E5%A4%8D%E7%94%A8%E6%96%B9%E5%BC%8Fepoll-select%E5%92%8Cpoll"><span class="nav-number">1.4.1.1.</span> <span class="nav-text"> Linux下的三种IO复用方式：epoll、select和poll</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -415,7 +408,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -428,7 +421,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

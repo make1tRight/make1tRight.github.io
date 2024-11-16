@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="内存满了会发生什么？内存分配的过程是怎样的？  通过malloc函数申请虚拟内存，进程使用这个虚拟内存的时候发现没有对应的物理内存 -&gt; 引发缺页中断 如果此时物理内存不够，会触发后台内存回收kswapd，异步执行、不阻塞 如果后台内存回收速度跟不上内存申请的速度，会触发直接内存回收，同步执行、阻塞 如果直接内存回收也没办法获得足够的物理内存，那么触发OOM（Out of Memory机制）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Computer System | Analysis of Low Memory">
+<meta property="og:url" content="http://example.com/2024/11/16/Analysis-of-Low-Memory/index.html">
+<meta property="og:site_name" content="Make it right.">
+<meta property="og:description" content="内存满了会发生什么？内存分配的过程是怎样的？  通过malloc函数申请虚拟内存，进程使用这个虚拟内存的时候发现没有对应的物理内存 -&gt; 引发缺页中断 如果此时物理内存不够，会触发后台内存回收kswapd，异步执行、不阻塞 如果后台内存回收速度跟不上内存申请的速度，会触发直接内存回收，同步执行、阻塞 如果直接内存回收也没办法获得足够的物理内存，那么触发OOM（Out of Memory机制）">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/Analysis_of_low_memory/Analysis_of_low_memory_1.png">
+<meta property="og:image" content="http://example.com/images/Analysis_of_low_memory/Analysis_of_low_memory_2.png">
+<meta property="og:image" content="http://example.com/images/Analysis_of_low_memory/Analysis_of_low_memory_3.png">
+<meta property="article:published_time" content="2024-11-16T06:06:45.000Z">
+<meta property="article:modified_time" content="2024-11-16T06:40:29.636Z">
+<meta property="article:author" content="Make1tRight">
+<meta property="article:tag" content="OOM">
+<meta property="article:tag" content="memory management">
+<meta property="article:tag" content="Computer System">
+<meta property="article:tag" content="xiaolin coding">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/Analysis_of_low_memory/Analysis_of_low_memory_1.png">
+
+<link rel="canonical" href="http://example.com/2024/11/16/Analysis-of-Low-Memory/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Computer System | Analysis of Low Memory | Make it right.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Make it right.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/16/Analysis-of-Low-Memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Computer System | Analysis of Low Memory
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-11-16 14:06:45 / Modified: 14:40:29" itemprop="dateCreated datePublished" datetime="2024-11-16T14:06:45+08:00">2024-11-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="内存满了会发生什么？"><a href="#内存满了会发生什么？" class="headerlink" title="内存满了会发生什么？"></a>内存满了会发生什么？</h2><h3 id="内存分配的过程是怎样的？"><a href="#内存分配的过程是怎样的？" class="headerlink" title="内存分配的过程是怎样的？"></a>内存分配的过程是怎样的？</h3><p><img src="/../images/Analysis_of_low_memory/Analysis_of_low_memory_1.png" alt="Analysis_of_low_memory_1"></p>
+<ol>
+<li>通过malloc函数申请虚拟内存，进程使用这个虚拟内存的时候发现没有对应的物理内存 -&gt; 引发缺页中断</li>
+<li>如果此时物理内存不够，会触发后台内存回收kswapd，异步执行、不阻塞</li>
+<li>如果后台内存回收速度跟不上内存申请的速度，会触发直接内存回收，同步执行、阻塞</li>
+<li>如果直接内存回收也没办法获得足够的物理内存，那么触发OOM（Out of Memory机制）杀死占用物理内存最多的进程，不够再杀</li>
+</ol>
+<h3 id="哪些内存可以被回收？"><a href="#哪些内存可以被回收？" class="headerlink" title="哪些内存可以被回收？"></a>哪些内存可以被回收？</h3><ol>
+<li>文件页，就是内核缓存的磁盘数据和文件数据；因为这些数据如果我们有需要的话回磁盘再次读取就好，如果文件页没有改动那么直接回收，如果文件页被应用程序改动过，也就变成了脏页，这时候会先保存到磁盘中再进行内存释放</li>
+<li>匿名页，比如堆栈中的数据，因为很有可能被再次访问到，所以不能直接释放，通过linux的swap机制，先保存到磁盘中再进行内存释放，如果还需要这些数据，从磁盘中读取就好<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="comment"># -i就是不区分大小写的意思</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">cat</span> /proc/meminfo | grep -i active | <span class="built_in">sort</span></span></span><br><span class="line">Active:</span><br><span class="line">Active(anon):</span><br><span class="line">Active(file):</span><br><span class="line">Inactive:</span><br><span class="line">Inactive(anon):</span><br><span class="line">Inactive(file):</span><br></pre></td></tr></table></figure></li>
+<li>内存回收（文件页、匿名页的回收）的算法基于LRU算法，就是优先回收不常访问的内存，简单来说就是维护两个链表，一个活跃内存页链表active_list（最近被访问过）一个不活跃内存页链表inactive_list（很少被访问），越接近链表尾部的内存越不活跃，从链表尾部开始释放内存就好</li>
+</ol>
+<h3 id="内存回收带来的性能影响"><a href="#内存回收带来的性能影响" class="headerlink" title="内存回收带来的性能影响"></a>内存回收带来的性能影响</h3><ol>
+<li>因为一些文件被改动，或者不能在磁盘中访问，所以脏页、堆栈数据等文件会需要先保存到磁盘中再进行内存释放，一旦涉及磁盘就意味着磁盘IO操作会很多，系统性能就会下降，也就是变卡</li>
+<li>如何进行优化？<ol>
+<li>可以调整参数<code>/proc/sys/vm/swappiness</code>，范围是<code>0-100</code>，来调整对文件页和匿名页的回收倾向，因为文件页碰到干净页是可以直接释放的，所以匿名页的回收会涉及更多IO操作 -&gt; 对性能的影响更大；<code>swappiness</code>越大越倾向于回收匿名页，<code>swappiness</code>越小越倾向于回收文件页<br><img src="/../images/Analysis_of_low_memory/Analysis_of_low_memory_2.png" alt="Analysis_of_low_memory_2"></li>
+<li>kswapd机制在$$pages_min\le pages_free\le pages_low$$的时候会触发，直到pages_free大于pages_high<ol>
+<li>$$pages_free \le pages_min$$的时候会触发直接内存回收，这时候会阻塞程序</li>
+<li>pages_min可以通过系统参数<code>/proc/sys/vm/min_free_kbytes</code>来设置，另外两个参数是根据pages_min算出来的，low&#x3D;min<em>5&#x2F;4，high&#x3D;min</em>3&#x2F;2<ol>
+<li>关注延迟 -&gt; 上调；关注内存 -&gt; 下调</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>调高<code>/proc/sys/vm/min_free_kbytes</code>来调高pages_min，尽早触发kswapd内核线程异步回收机制，避免直接内存回收；</li>
+</ol>
+</li>
+</ol>
+<h4 id="NUMA架构下的内存回收策略"><a href="#NUMA架构下的内存回收策略" class="headerlink" title="NUMA架构下的内存回收策略"></a>NUMA架构下的内存回收策略</h4><p><img src="/../images/Analysis_of_low_memory/Analysis_of_low_memory_3.png" alt="Analysis_of_low_memory_3"></p>
+<ol>
+<li>SMP架构就是多个CPU处理器地位平等、共享电脑硬件资源（总线、内存、IO、操作系统等），每个CPU访问内存要花费的时间是一样的，所以SMP也称为一致存储访问结构UMA，Uniform Memory Access</li>
+<li>NUMA架构就是将CPU进行分组，一个组是一个Node<ol>
+<li>每个Node有自己独立的资源（内存、IO等）</li>
+<li>访问远端Node比本地内存耗时很多</li>
+<li>不同Node通过互联模块总线QPI来通信，意味着每个Node的CPU都可以访问到整个系统中所有内存<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt; /proc/sys/vm/zone_reclaim_mode</span><br><span class="line"><span class="comment"># 0(默认值, 推荐) - 在回收本地内存之前, 在其他Node寻找空闲内存</span></span><br><span class="line"><span class="comment"># 1 - 只回收本地内存</span></span><br><span class="line"><span class="comment"># 2 - 只回收本地内存, 可将脏页写回硬盘后回收内存</span></span><br><span class="line"><span class="comment"># 4-  只回收本地内存, 通过swap内存的方式回收</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li>在NUMA架构下，如果内存不够用，既可以通过其他Node来获取空闲内存，也可以通过回收本地内存来获取空闲内存；虽然访问其他Node比访问本地内存耗时，但是对性能的影响更小</li>
+</ol>
+<h3 id="如何保护一个进程不被OOM杀掉"><a href="#如何保护一个进程不被OOM杀掉" class="headerlink" title="如何保护一个进程不被OOM杀掉?"></a>如何保护一个进程不被OOM杀掉?</h3><ol>
+<li><code>oom_badness()</code>函数会把可以杀掉的进程全部扫描一遍，对每个进程打分，分数最高的进程会被杀掉</li>
+<li>每个进程都有一个OOM校准值<code>oom_score_adj</code>，取值范围在-1000~1000之间、默认值是0，分数越高越容易被杀；如果无论如何都不能杀这个进程 -&gt; 把进程的这个参数设为-1000</li>
+<li>进程使用的物理内存页面数越高越容易被杀</li>
+<li>计算公式<br>$$points&#x3D;process _ pages+oom_score_adj\times totoalpages\div1000$$</li>
+</ol>
+<ul>
+<li>process_pages是进程已经使用的页面数，totalpages是系统总的可用页面数</li>
+</ul>
+<ol>
+<li>不建议把业务程序的<code>oom_score_adj</code>设置为-1000，如果业务程序有内存泄漏又杀不掉，内存开销就越来越大 -&gt; OOM KILLER不断被唤醒杀掉其他的程序</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/OOM/" rel="tag"># OOM</a>
+              <a href="/tags/memory-management/" rel="tag"># memory management</a>
+              <a href="/tags/Computer-System/" rel="tag"># Computer System</a>
+              <a href="/tags/xiaolin-coding/" rel="tag"># xiaolin coding</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/16/How-malloc-works/" rel="prev" title="Computer System | How malloc works">
+      <i class="fa fa-chevron-left"></i> Computer System | How malloc works
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%BB%A1%E4%BA%86%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">内存满了会发生什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">内存分配的过程是怎样的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%86%85%E5%AD%98%E5%8F%AF%E4%BB%A5%E8%A2%AB%E5%9B%9E%E6%94%B6%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">哪些内存可以被回收？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%80%A7%E8%83%BD%E5%BD%B1%E5%93%8D"><span class="nav-number">1.3.</span> <span class="nav-text">内存回收带来的性能影响</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NUMA%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.1.</span> <span class="nav-text">NUMA架构下的内存回收策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E6%8A%A4%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B%E4%B8%8D%E8%A2%ABOOM%E6%9D%80%E6%8E%89"><span class="nav-number">1.4.</span> <span class="nav-text">如何保护一个进程不被OOM杀掉?</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Make1tRight"
+      src="/uploads/xiaoxin.jpg">
+  <p class="site-author-name" itemprop="name">Make1tRight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/make1tRight" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;make1tRight" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xliang9809@163.com" title="E-Mail → mailto:xliang9809@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Make1tRight</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
