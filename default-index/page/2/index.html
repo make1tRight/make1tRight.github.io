@@ -155,6 +155,131 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/10/Array/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/10/Array/" class="post-title-link" itemprop="url">Array</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-11-10 09:50:36" itemprop="dateCreated datePublished" datetime="2024-11-10T09:50:36+08:00">2024-11-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-11-14 10:08:23" itemprop="dateModified" datetime="2024-11-14T10:08:23+08:00">2024-11-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/../images/array_summary.png" alt="array_summary"></p>
+<h3 id="数组查找"><a href="#数组查找" class="headerlink" title="数组查找"></a>数组查找</h3><h4 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h4><ol>
+<li>思路：有序数组每次找中间点，大了在左区间继续找，小了在右区间继续找，必须分离开不满足条件的点</li>
+<li>为什么这里一定要&lt;&#x3D;？ - 不一定，但是统一选&lt;&#x3D;<ol>
+<li>&lt;&#x3D; 是定义了一个左闭右闭区间；坚持左闭右闭，最后可以缩小成一个点，例如，<code>[1, 1]</code>，right是可以取到的，所以要把不满足条件的点分离开不加入下一次查找（right &#x3D; mid - 1）</li>
+<li>&lt; 是定义了一个左闭右开区间，如果是左闭右开&lt;，right是取不到的（right &#x3D; mid），例如，<code>[1, 1)</code>这是个有问题的区间，所以right要是取不到的点，例如，<code>[1, 2)</code></li>
+</ol>
+</li>
+<li>二分查找的条件是有序+不重复数组</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">search</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> left = <span class="number">0</span>, right = nums.<span class="built_in">size</span>() - <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 左闭右闭区间</span></span><br><span class="line">        <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">            <span class="type">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">                left = mid + <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">                right = mid - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="长度最小的子数组"><a href="#长度最小的子数组" class="headerlink" title="长度最小的子数组"></a>长度最小的子数组</h4><ol>
+<li>思路：滑动窗口内统计元素之和，右边界加入元素，左边界弹出元素（弹出之前要统计最小窗口值和重新计算窗口元素和）</li>
+<li>缩小窗口的过程必须写成while循环，因为窗口内的总和大于target可以继续缩小</li>
+<li>注意这题是找子数组，所以不能排序</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minSubArrayLen</span><span class="params">(<span class="type">int</span> target, vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> result = INT_MAX;</span><br><span class="line">        <span class="type">int</span> subLength = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; nums.<span class="built_in">size</span>(); ++j) &#123;</span><br><span class="line">            sum += nums[j];</span><br><span class="line">            <span class="keyword">while</span> (target &lt;= sum) &#123;       <span class="comment">//注意这里用while循环, 窗口缩小直到小于target</span></span><br><span class="line">                subLength = j - i + <span class="number">1</span>;    <span class="comment">//有效窗口最小值在这里统计</span></span><br><span class="line">                result = result &lt; subLength ? result : subLength;    <span class="comment">//统计窗口最小值</span></span><br><span class="line">                sum -= nums[i++];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result == INT_MAX ? <span class="number">0</span> : result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="区间和"><a href="#区间和" class="headerlink" title="区间和"></a>区间和</h4><ol>
+<li>思路：输入的时候就去求前缀和，并形成新的数组，要输出区间和就用右区间前缀和-左边界之前区间前缀和，时间复杂度是O(n+q)，q是查询次数</li>
+<li>如果每次都对区间进行重复求和，时间复杂度是O(n*m)m，m是查询次数（会超时）</li>
+<li>scanf、printf性能更高，可格式化输入输出，适用于大规模数据读取输出操作；cin、cout是标准库函数，更直观、支持操作符&gt;&gt;和&lt;&lt;重载，适用于小规模数据读取输出操作</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">nums</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">p</span><span class="params">(n)</span></span>;</span><br><span class="line">        </span><br><span class="line">    <span class="type">int</span> presum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        cin &gt;&gt; nums[i];</span><br><span class="line">        presum += nums[i];</span><br><span class="line">        p[i] = presum;</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> start, end;</span><br><span class="line">    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;start, &amp;end)) &#123;  <span class="comment">//~按位取反</span></span><br><span class="line">        <span class="type">int</span> sum;                            <span class="comment">//如果scanf没有扫描到值会返回EOF(-1), 按位取反就是0, 跳出循环</span></span><br><span class="line">        <span class="keyword">if</span> (start == <span class="number">0</span>) &#123;</span><br><span class="line">            sum = p[end];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            sum = p[end] - p[start - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, sum);</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="数组修改"><a href="#数组修改" class="headerlink" title="数组修改"></a>数组修改</h3><h4 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h4><ol>
+<li>思路：快慢指针，快指针为目标值的时候直接自增，为非目标值的时候赋值给慢指针然后移动慢指针</li>
+<li>快慢指针可以把一个数组当成两个来用，因为慢指针永远追不上快指针，最后的结果返回慢指针就行</li>
+<li>数组删除元素本身就不是真的删除，而是调整自己有效区间的大小，值还在那个内存里，只是不属于数组了</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">removeElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> slowIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> fastIndex = <span class="number">0</span>; fastIndex &lt; nums.<span class="built_in">size</span>(); ++fastIndex) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[fastIndex] != val) &#123;</span><br><span class="line">                nums[slowIndex++] = nums[fastIndex];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> slowIndex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="有序数组的平方"><a href="#有序数组的平方" class="headerlink" title="有序数组的平方"></a>有序数组的平方</h4><ol>
+<li>思路：快慢指针，快指针遍历，慢指针计算平方；记得平方后元素顺序要调整</li>
+<li>排序可以sort，这里复习一下快排</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">part</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;vec, <span class="type">int</span> low, <span class="type">int</span> high)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> i = low, j = high, pivot = vec[low];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="keyword">while</span> (i &lt; j &amp;&amp; vec[j] &gt; pivot) &#123;</span><br><span class="line">                --j;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i &lt; j) &#123;</span><br><span class="line">                <span class="built_in">swap</span>(vec[i++], vec[j]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (i &lt; j &amp;&amp; vec[i] &lt;= pivot) &#123;</span><br><span class="line">                ++i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i &lt; j) &#123;</span><br><span class="line">                <span class="built_in">swap</span>(vec[i], vec[j--]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">quickSort</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;vec, <span class="type">int</span> low, <span class="type">int</span> high)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (low &lt; high) &#123;</span><br><span class="line">            <span class="type">int</span> mid = <span class="built_in">part</span>(vec, low, high);</span><br><span class="line">            <span class="built_in">quickSort</span>(vec, low, mid - <span class="number">1</span>);</span><br><span class="line">            <span class="built_in">quickSort</span>(vec, mid + <span class="number">1</span>, high);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">sortedSquares</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> slowIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> fastIndex = <span class="number">0</span>; fastIndex &lt; nums.<span class="built_in">size</span>(); ++fastIndex) &#123;</span><br><span class="line">            nums[slowIndex++] = nums[fastIndex] * nums[fastIndex]; </span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">quickSort</span>(nums, <span class="number">0</span>, nums.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> nums;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="螺旋矩阵Ⅱ"><a href="#螺旋矩阵Ⅱ" class="headerlink" title="螺旋矩阵Ⅱ"></a>螺旋矩阵Ⅱ</h4><ol>
+<li>思路：从1-n^2构成螺旋矩阵总共需要n &#x2F; 2圈，每次都选择左闭右开区间，顺时针转动；如果n是奇数则额外处理最中心的位置</li>
+<li>最外层要有loop来控制圈数，内层要有4个for循环来控制旋转的4个方向</li>
+<li>起始位置和偏移量都是基于矩阵位置来计算的，考察对元素位置的访问</li>
+<li>选好了填充元素的区间（比如左闭右开）4个方向都要遵循左闭右开，中途更换很容易乱</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">generateMatrix</span>(<span class="type">int</span> n) &#123;</span><br><span class="line">        <span class="type">int</span> startx = <span class="number">0</span>, starty = <span class="number">0</span>;    <span class="comment">//控制起始位置</span></span><br><span class="line">        <span class="type">int</span> loop = n / <span class="number">2</span>;              <span class="comment">//控制圈数</span></span><br><span class="line">        <span class="type">int</span> mid = n / <span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> count = <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> offset = <span class="number">1</span>;                <span class="comment">//内层偏移量要递增</span></span><br><span class="line">        <span class="type">int</span> i, j;                      <span class="comment">//控制实际位移</span></span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">result</span>(n, <span class="built_in">vector</span>&lt;<span class="type">int</span>&gt;(n, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (loop--) &#123;</span><br><span class="line">            i = startx;</span><br><span class="line">            j = starty;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (j; j &lt; n - offset; ++j) &#123;</span><br><span class="line">                result[i][j] = count++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (i; i &lt; n - offset; ++i) &#123;</span><br><span class="line">                result[i][j] = count++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (; j &gt; starty; --j) &#123;    <span class="comment">//这里不要把初始值覆盖了</span></span><br><span class="line">                result[i][j] = count++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (; i &gt; startx; --i) &#123;</span><br><span class="line">                result[i][j] = count++;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            startx += <span class="number">1</span>;</span><br><span class="line">            starty += <span class="number">1</span>;</span><br><span class="line">            offset += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">1</span>) &#123;</span><br><span class="line">            result[mid][mid] = count;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/08/Stack-Queue/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1066,7 +1191,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1079,7 +1204,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
