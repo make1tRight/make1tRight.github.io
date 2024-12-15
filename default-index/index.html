@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-12-15 11:34:57" itemprop="dateModified" datetime="2024-12-15T11:34:57+08:00">2024-12-15</time>
+                <time title="Modified: 2024-12-15 11:37:02" itemprop="dateModified" datetime="2024-12-15T11:37:02+08:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -332,7 +332,7 @@
 <li>思路：每次遍历result末尾的元素作为起点，找到它能够到达的目的地；如果能够用完所有的机票则返回true，否则返回false</li>
 <li>unordered_map来记录source和destination之间的映射关系，为了避免死循环用map来记录目的地和票数量之间的映射关系；</li>
 <li>遍历map时，关键字是不能修改的最好定义为const，因为关键字修改了查找操作将变得无效或效率低下</li>
-<li>unordered_map&lt;string, map&lt;string, int&gt;&gt;这里第一个string是起点，第二个string是终点，int代表有一张票，这个int可以有效代替避免了我们删除元素的操作，因为删除元素会导致迭代器失效</li>
+<li><code>unordered_map&lt;string, map&lt;string, int&gt;&gt;</code>这里第一个string是起点，第二个string是终点，int代表有一张票，这个int可以有效代替避免了我们删除元素的操作，因为删除元素会导致迭代器失效</li>
 <li>终止条件的意思是：票数+1就是途径的地点数</li>
 <li>返回值设置为bool类型是因为，只要找到了一条路就说明成功了</li>
 <li>for循环里面遍历的是目的地(第二个string)和能去的次数(int)<ol>
@@ -346,7 +346,7 @@
 <h4 id="N皇后"><a href="#N皇后" class="headerlink" title="N皇后"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/n-queens/">N皇后</a></h4><ol>
 <li>思路：每次遍历棋盘的一行，满足N皇后有效性检查就递归深一层，也代表着棋盘的下一行；当递归的行数&#x3D;棋盘的行数时回收结果</li>
 <li>判断有效性<ol>
-<li>同行同列不能出现Q - 同行不需要检查，同列需要检查；因为同一行只会放一个Q，遍历同行的元素的时候会有重置回’.’的逻辑，所以有效性检查只需要检查同列是否有Q</li>
+<li>同行同列不能出现Q - 同行不需要检查，同列需要检查；因为同一行只会放一个Q，遍历同行的元素的时候会有重置回<code>&#39;.&#39;</code>的逻辑，所以有效性检查只需要检查同列是否有Q</li>
 <li>45°不能出现Q - (i-1, j-1)</li>
 <li>135°不能出现Q - (i-1, j+1)</li>
 </ol>
