@@ -155,6 +155,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/07/List/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/07/List/" class="post-title-link" itemprop="url">List</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2025-03-07 23:55:55" itemprop="dateCreated datePublished" datetime="2025-03-07T23:55:55+08:00">2025-03-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-03-08 00:15:27" itemprop="dateModified" datetime="2025-03-08T00:15:27+08:00">2025-03-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/data-structure/" itemprop="url" rel="index"><span itemprop="name">data structure</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="增"><a href="#增" class="headerlink" title="增"></a>增</h3><h3 id="删"><a href="#删" class="headerlink" title="删"></a>删</h3><h3 id="查"><a href="#查" class="headerlink" title="查"></a>查</h3><h3 id="改"><a href="#改" class="headerlink" title="改"></a>改</h3><h4 id="反转链表Ⅱ"><a href="#反转链表Ⅱ" class="headerlink" title="反转链表Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list-ii/">反转链表Ⅱ</a></h4><p>给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;&#x3D; right 。<br>请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。</p>
+<p><strong>思路：</strong></p>
+<ol>
+<li>翻转链表需要3个指针<ol>
+<li>变动的是curr的指针, 所以指针在变动前需要有一个temp指针用于备份下一个节点位置</li>
+<li>curr更新完后要指向的是prev节点</li>
+<li>调整完指针以后, prev和curr各自向前移位1个节点</li>
+</ol>
+</li>
+<li>为了统一所有节点的操作, 定义虚拟头结点是一个好的方法<ol>
+<li>虚拟头结点要自己new一个</li>
+<li>别忘记虚拟头结点的next指针要指向原链表的head</li>
+<li>返回的时候也可以借助虚拟头结点进行返回, 虚拟头结点是局部变量, 离开函数后会自动销毁</li>
+</ol>
+</li>
+<li>本题的难点在于处理左右边界的条件<ol>
+<li>prev是调整前一个节点, curr是调整的第一个节点</li>
+<li>和反转链表的区别在于, 这个初始状态我们要记住, </li>
+<li>因为prev的next要指向最终的prev, curr的next要指向最终的curr</li>
+</ol>
+</li>
+</ol>
+<ul>
+<li>做题的时候还是要自己模拟一遍, 再开始写代码</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseBetween</span><span class="params">(ListNode* head, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">        ListNode* dummyHead = <span class="keyword">new</span> <span class="built_in">ListNode</span>(<span class="number">0</span>);</span><br><span class="line">        dummyHead-&gt;next = head;</span><br><span class="line">        </span><br><span class="line">        ListNode* prev = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* curr = dummyHead;</span><br><span class="line">        <span class="type">int</span> diff = right - left;</span><br><span class="line">        <span class="keyword">while</span> (left--) &#123;</span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = curr-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 注意不要成环</span></span><br><span class="line">        ListNode* startNode = prev;</span><br><span class="line">        ListNode* endNode = curr;</span><br><span class="line"></span><br><span class="line">        prev = prev-&gt;next;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (diff--) &#123;</span><br><span class="line">            ListNode* temp = curr-&gt;next;</span><br><span class="line">            curr-&gt;next = prev;</span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        startNode-&gt;next = prev;</span><br><span class="line">        endNode-&gt;next = curr;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dummyHead-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/19/Greedy-Algorithm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1978,187 +2076,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/zero_copy_technology/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
-      <meta itemprop="name" content="Make1tRight">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Make it right.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/15/zero_copy_technology/" class="post-title-link" itemprop="url">Computer System | What is zero copy technology?</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2024-11-15 13:38:47 / Modified: 14:59:35" itemprop="dateCreated datePublished" datetime="2024-11-15T13:38:47+08:00">2024-11-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="什么是零拷贝技术？"><a href="#什么是零拷贝技术？" class="headerlink" title="什么是零拷贝技术？"></a>什么是零拷贝技术？</h2><h3 id="为什么要有DMA技术"><a href="#为什么要有DMA技术" class="headerlink" title="为什么要有DMA技术?"></a>为什么要有DMA技术?</h3><p><img src="/../images/networkSystem/network_system_1.png" alt="DMA_technology_1"></p>
-<ol>
-<li>早期从磁盘中读取数据是要CPU自己读到寄存器中的，期间CPU没有办法执行其他任务，因为磁盘的读写速度是特别慢的（对比CPU和内存来说），所以CPU自己读是很浪费时间的</li>
-<li>DMA控制器就是帮助CPU从磁盘控制器缓冲区里读取数据到内核缓冲区，读完发送中断告知CPU; 在这期间不占用CPU, CPU可以去执行其他任务-&gt;提升了系统性能</li>
-<li>CPU收到DMA信号以后会将数据从内核缓冲区拷贝到用户空间, 至此, 系统调用返回</li>
-</ol>
-<h3 id="传统的文件传输有多糟糕"><a href="#传统的文件传输有多糟糕" class="headerlink" title="传统的文件传输有多糟糕?"></a>传统的文件传输有多糟糕?</h3><p><img src="/../images/networkSystem/network_system_2.png" alt="DMA_technology_2"></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通文件的读写</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">read</span><span class="params">(<span class="type">int</span> fildes, <span class="type">void</span>* buf, <span class="type">size_t</span> nbytes)</span></span>;</span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">write</span><span class="params">(<span class="type">int</span> fildes, <span class="type">const</span> <span class="type">void</span>* buf, <span class="type">size_t</span> nbytes)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 专用于socket的读写</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">void</span>* buf, <span class="type">size_t</span> len, <span class="type">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">send</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="type">void</span>* buf, <span class="type">size_t</span> len, <span class="type">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>DMA控制器将数据从磁盘拷贝到内核空间</li>
-<li>CPU将数据从内核空间拷贝到用户空间, 用户才能够使用到这部分数据</li>
-<li>CPU将数据从用户空间拷贝到socket, 准备让网卡进行发送</li>
-<li>DMA控制器将数据从socket拷贝到网卡的缓冲区中, 进行发送</li>
-<li>为了传输这个数据发生了4次拷贝, 其中CPU参与了2次拷贝, 所以我们在开发的过程中要尽量避免用read, write这样低效率的方式去发送数据或者说发送文件</li>
-</ol>
-<h3 id="如何优化文件传输的性能"><a href="#如何优化文件传输的性能" class="headerlink" title="如何优化文件传输的性能?"></a>如何优化文件传输的性能?</h3><table>
-<thead>
-<tr>
-<th>关于系统调用</th>
-<th>原因</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>为什么要使用系统调用?</td>
-<td>因为用户空间没有操作磁盘或网卡的权限, 只有操作系统内核有权限, 所以需要使用操作系统内核提供的系统调用函数将数据从磁盘或网卡中提取出来</td>
-</tr>
-<tr>
-<td>系统调用函数的开销是什么?</td>
-<td>系统调用 x 1&#x3D;上下文切换 x 2, 用户数据要从用户态拷贝到内核态，在内核态处理完数据后又要从内核态拷贝回用户态</td>
-</tr>
-<tr>
-<td>如何减少系统调用的次数?</td>
-<td>由于内核缓存空间到用户缓存空间以后没有对数据进行再处理，而是直接发给socket缓冲区 -&gt; 用户缓冲区在这里没有必要存在</td>
-</tr>
-</tbody></table>
-<h3 id="如何实现零拷贝"><a href="#如何实现零拷贝" class="headerlink" title="如何实现零拷贝?"></a>如何实现零拷贝?</h3><ol>
-<li>首先看read函数<br> <img src="/../images/networkSystem/network_system_3.png" alt="DMA_technology_3"><ol>
-<li>read函数需要将内核缓冲区中的数据拷贝到用户缓冲区以后进行读取</li>
-<li>用mmap替换read函数-&gt;调用mmap函数以后，DMA会将磁盘中的数据拷贝到内核缓冲区中，然后让应用进程和操作系统共享这个缓冲区；</li>
-<li>应用进程调用write<ol>
-<li>CPU直接从内核缓冲区拷贝到socket缓冲区 -&gt; 不经过用户缓冲区，减少了1次数据拷贝</li>
-</ol>
-</li>
-<li>效果：<ol>
-<li>因为系统调用的次数还是2次(mmap + write) -&gt; 上下文切换次数还是4次</li>
-<li>用mmap系统调用函数替换read系统调用函数减少了1次数据拷贝</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>sendfile函数能够在两个文件描述符之间直接传递数据， 避免了内核缓冲区与用户缓冲区之间的数据拷贝， 真正实现了零拷贝<br> <img src="/../images/networkSystem/network_system_4.png" alt="DMA_technology_4"> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用sendfile要求linux内核版本在2.1以上</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">sendfile</span><span class="params">(<span class="type">int</span> out_fd, <span class="type">int</span> in_fd, <span class="type">off_t</span>* offset, <span class="type">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>sendfile函数可以代替read + write -&gt; 2次系统调用变成了1次系统调用-&gt;减少了2次上下文切换次数<br> <img src="/../images/networkSystem/network_system_5.png" alt="DMA_technology_5"></li>
-</ol>
-</li>
-<li>如果网卡支持SG-DMA（The Scatter-Gather Direct Memory Access） -&gt; 可以进一步减少通过 CPU 把内核缓冲区里的数据拷贝到 socket 缓冲区的过程<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网卡是否支持SG-DMA</span></span><br><span class="line">ethtool -k ens33 | grep scatter-gather</span><br><span class="line">scatter-gather: on</span><br></pre></td></tr></table></figure></li>
-<li>效果:<ol>
-<li>加上SG-DMA技术, 4次数据拷贝 -&gt; 2次数据拷贝</li>
-<li>sendfile代替read + write, 4次上下文切换 -&gt; 2次上下文切换(内核态&lt;&#x3D;&gt;用户态)</li>
-<li>整个过程中, CPU都没有参与数据拷贝的过程, 因为数据拷贝都交给DMA完成, 所以完全实现了零拷贝; </li>
-<li>使用零拷贝可以把文件传输性能提高一倍以上, 但是零拷贝技术不能对文件内容进一步加工(例如压缩后再发送)</li>
-</ol>
-</li>
-</ol>
-<h3 id="Pagecache有什么用"><a href="#Pagecache有什么用" class="headerlink" title="Pagecache有什么用?"></a>Pagecache有什么用?</h3><p>这里的Pagecache也就对应上面图片里面从磁盘文件里面拷贝出来的缓冲区</p>
-<ol>
-<li><p>其实就是内存中的高速缓冲区，因为读取磁盘的速度远远比不上读取内存的速度，所以把数据先保存到pagecache可以提升数据的读取速度</p>
-</li>
-<li><p>因为pagecache容量对比磁盘来说小很多，所以pagecache会淘汰一段时间内没用的数据</p>
-</li>
-<li><p>传输大文件的时候pagecache不适用，因为内存大小有限，而且大文件不是每部分都有用 -&gt; 占用了热点小文件的空间 -&gt; 降低了并发的处理效率</p>
-</li>
-<li><p>大文件拷贝不应该占用pagecache, 而零拷贝基于pagecache来实现, 所以, 大文件拷贝不适用零拷贝</p>
-</li>
-<li><p>大文件传输应该用什么实现？ 首先从传统的文件传输过程来切入</p>
-<table>
-<thead>
-<tr>
-<th align="center">传统的文件传输</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">系统调用read函数</td>
-</tr>
-<tr>
-<td align="center">内核向磁盘发起IO请求</td>
-</tr>
-<tr>
-<td align="center">磁盘将数据准备好并向内核发起IO中断</td>
-</tr>
-<tr>
-<td align="center">内核将数据从磁盘控制缓冲区读取到pagecache中</td>
-</tr>
-<tr>
-<td align="center">内核将数据从pagecache拷贝到用户缓冲区</td>
-</tr>
-<tr>
-<td align="center">read调用正常返回</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>上述过程存在的两个问题:  大文件占用了pagecache + read调用过程中阻塞进程</p>
-</li>
-<li><p>大文件占用了pagecache</p>
-<ol>
-<li>内核直接将数据从磁盘控制器缓冲区拷贝到用户缓冲区, 跳过了pagecache</li>
-<li>绕开pagecache的I&#x2F;O叫做直接I&#x2F;O; 使用pagecache的I&#x2F;O叫做缓存I&#x2F;O</li>
-</ol>
-</li>
-<li><p>read调用过程中阻塞进程 -&gt; 使用异步IO来解决, 用户进程发起异步IO读, 内核向磁盘发起读请求, 此时用户进程直接返回执行其他任务</p>
-</li>
-<li><p>所以, 针对大文件传输可以使用直接IO + 异步IO的方案来代替零拷贝技术; 对于Nginx来说, 判断文件是否为大文件的依据是: file_size &gt; directio &#x3D; 1024m, 也就是1G(仅供参考)</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2230,20 +2147,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -2278,7 +2195,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
