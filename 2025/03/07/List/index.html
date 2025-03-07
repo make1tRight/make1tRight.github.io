@@ -28,7 +28,7 @@
 <meta property="og:description" content="增删查改反转链表Ⅱ给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;&#x3D; right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。 思路：  翻转链表需要3个指针 变动的是curr的指针, 所以指针在变动前需要有一个temp指针用于备份下一个节点位置 curr更新完后要指向的是prev节点 调整完指针以后,">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-03-07T15:55:55.000Z">
-<meta property="article:modified_time" content="2025-03-07T16:15:27.679Z">
+<meta property="article:modified_time" content="2025-03-07T16:23:57.224Z">
 <meta property="article:author" content="Make1tRight">
 <meta property="article:tag" content="leetcode">
 <meta property="article:tag" content="algorithm">
@@ -193,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-08 00:15:27" itemprop="dateModified" datetime="2025-03-08T00:15:27+08:00">2025-03-08</time>
+                <time title="Modified: 2025-03-08 00:23:57" itemprop="dateModified" datetime="2025-03-08T00:23:57+08:00">2025-03-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -232,8 +232,8 @@
 </ol>
 </li>
 <li>本题的难点在于处理左右边界的条件<ol>
-<li>prev是调整前一个节点, curr是调整的第一个节点</li>
-<li>和反转链表的区别在于, 这个初始状态我们要记住, </li>
+<li>和反转链表的区别在于, 首个要调整的节点指针要先保存, 因为他要指向的对象还没到</li>
+<li>保存完1的状态以后, prev和curr往前走1个节点再开始进行中间节点的调整</li>
 <li>因为prev的next要指向最终的prev, curr的next要指向最终的curr</li>
 </ol>
 </li>

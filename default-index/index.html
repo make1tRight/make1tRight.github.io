@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-08 00:15:27" itemprop="dateModified" datetime="2025-03-08T00:15:27+08:00">2025-03-08</time>
+                <time title="Modified: 2025-03-08 00:23:57" itemprop="dateModified" datetime="2025-03-08T00:23:57+08:00">2025-03-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -225,8 +225,8 @@
 </ol>
 </li>
 <li>本题的难点在于处理左右边界的条件<ol>
-<li>prev是调整前一个节点, curr是调整的第一个节点</li>
-<li>和反转链表的区别在于, 这个初始状态我们要记住, </li>
+<li>和反转链表的区别在于, 首个要调整的节点指针要先保存, 因为他要指向的对象还没到</li>
+<li>保存完1的状态以后, prev和curr往前走1个节点再开始进行中间节点的调整</li>
 <li>因为prev的next要指向最终的prev, curr的next要指向最终的curr</li>
 </ol>
 </li>
