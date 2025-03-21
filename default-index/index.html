@@ -155,7 +155,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/21/List-1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/21/List/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/xiaoxin.jpg">
@@ -169,7 +169,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/03/21/List-1/" class="post-title-link" itemprop="url">List</a>
+            <a href="/2025/03/21/List/" class="post-title-link" itemprop="url">List</a>
         </h2>
 
         <div class="post-meta">
@@ -181,133 +181,6 @@
               
 
               <time title="Created: 2025-03-21 22:59:58 / Modified: 23:00:11" itemprop="dateCreated datePublished" datetime="2025-03-21T22:59:58+08:00">2025-03-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="增"><a href="#增" class="headerlink" title="增"></a>增</h3><h4 id="随机链表的复制"><a href="#随机链表的复制" class="headerlink" title="随机链表的复制"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/copy-list-with-random-pointer/description/?envType=study-plan-v2&envId=top-100-liked">随机链表的复制</a></h4><p>深拷贝一个随机链表<br><strong>解题步骤与思路O(n)&#x2F;O(n):</strong></p>
-<ol>
-<li>构造哈希表记录已构造链表防止无限递归</li>
-<li>递归遍历链表</li>
-<li>将节点加入到哈希表中</li>
-<li>递归拷贝next指针</li>
-<li>递归拷贝random指针</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    unordered_map&lt;Node*, Node*&gt; nmap;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">copyRandomList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (head == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!nmap.<span class="built_in">count</span>(head)) &#123;</span><br><span class="line">            Node* newnode = <span class="keyword">new</span> <span class="built_in">Node</span>(head-&gt;val);</span><br><span class="line">            nmap[head] = newnode;</span><br><span class="line">            newnode-&gt;next = <span class="built_in">copyRandomList</span>(head-&gt;next);</span><br><span class="line">            newnode-&gt;random = <span class="built_in">copyRandomList</span>(head-&gt;random);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nmap[head];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="删"><a href="#删" class="headerlink" title="删"></a>删</h3><h3 id="查"><a href="#查" class="headerlink" title="查"></a>查</h3><h4 id="回文链表"><a href="#回文链表" class="headerlink" title="回文链表"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/palindrome-linked-list/description/?envType=study-plan-v2&envId=top-100-liked">回文链表</a></h4><p>给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。</p>
-<p><strong>思路1：O(n)&#x2F;O(n)</strong></p>
-<ol>
-<li>遍历链表, 记录所有节点到数组</li>
-<li>双指针判断数组是否为回文串</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPalindrome</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* curr = head;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; vec;</span><br><span class="line">        <span class="comment">// 遍历链表, 记录所有节点到数组</span></span><br><span class="line">        <span class="keyword">while</span> (curr != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            vec.<span class="built_in">push_back</span>(curr-&gt;val);</span><br><span class="line">            curr = curr-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 双指针判断数组是否为回文串</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>, j = vec.<span class="built_in">size</span>() - <span class="number">1</span>; i &lt; j; ++i, --j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (vec[i] != vec[j]) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>思路2：O(n)&#x2F;O(1)</strong></p>
-<ol>
-<li>快慢指针找到链表中点&#x2F;右半链表第一个节点</li>
-<li>反转后半链表, 得到2个子链表</li>
-<li>各自遍历子链表, 两边值只要不同直接返回false, 否则返回true</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 快慢指针找到链表中点/右半链表第一个节点</span></span><br><span class="line">    <span class="function">ListNode* <span class="title">findMid</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* slow = head;</span><br><span class="line">        ListNode* fast = head;</span><br><span class="line">        <span class="keyword">while</span> (fast != <span class="literal">nullptr</span> &amp;&amp; fast-&gt;next != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            fast = fast-&gt;next-&gt;next;</span><br><span class="line">            slow = slow-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> slow;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* prev = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* curr = head;</span><br><span class="line">        <span class="keyword">while</span> (curr != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            ListNode* temp = curr-&gt;next;</span><br><span class="line">            curr-&gt;next = prev;</span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> prev;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPalindrome</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* mid = <span class="built_in">findMid</span>(head);</span><br><span class="line">        <span class="comment">// 反转后半链表, 得到2个子链表</span></span><br><span class="line">        ListNode* head2 = <span class="built_in">reverseList</span>(mid);</span><br><span class="line">        <span class="comment">// 各自遍历子链表, 两边值只要不同直接返回false, 否则返回true</span></span><br><span class="line">        <span class="keyword">while</span> (head2) &#123;</span><br><span class="line">            <span class="keyword">if</span> (head-&gt;val != head2-&gt;val) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            head = head-&gt;next;</span><br><span class="line">            head2 = head2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="改"><a href="#改" class="headerlink" title="改"></a>改</h3><h4 id="反转链表"><a href="#反转链表" class="headerlink" title="反转链表"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list/description/?envType=study-plan-v2&envId=top-100-liked">反转链表</a></h4><p>给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。</p>
-<p><strong>思路：</strong></p>
-<ol>
-<li>翻转链表需要3个指针<ol>
-<li>变动的是curr的指针, 所以指针在变动前需要有一个temp指针用于备份下一个节点位置</li>
-<li>curr更新完后要指向的是prev节点</li>
-<li>调整完指针以后, prev和curr各自向前移位1个节点</li>
-</ol>
-</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* prev = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* curr = head;</span><br><span class="line">        <span class="keyword">while</span> (curr != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            ListNode* temp = curr-&gt;next;</span><br><span class="line">            curr-&gt;next = prev;<span class="comment">// 反转的逻辑</span></span><br><span class="line">            <span class="comment">// 走到下一个节点</span></span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> prev;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h4 id="反转链表Ⅱ"><a href="#反转链表Ⅱ" class="headerlink" title="反转链表Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list-ii/">反转链表Ⅱ</a></h4><p>给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;&#x3D; right 。<br>请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。</p>
-<p><strong>思路：</strong></p>
-<ol>
-<li>翻转链表需要3个指针 - 同反转链表</li>
-<li>这一题定义虚拟头结点的意义是在开始前记录一下状态</li>
-<li>本题的难点在于处理左右边界的条件<ol>
-<li>和反转链表的区别在于, 首个要调整的节点指针要先保存, 因为他要指向的对象还没到</li>
-<li>保存完1的状态以后, prev和curr往前走1个节点再开始进行中间节点的调整</li>
-<li>因为prev的next要指向最终的prev, curr的next要指向最终的curr</li>
-</ol>
-</li>
-</ol>
-<ul>
-<li>做题的时候还是要自己模拟一遍, 再开始写代码</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseBetween</span><span class="params">(ListNode* head, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">        ListNode* dummyHead = <span class="keyword">new</span> <span class="built_in">ListNode</span>(<span class="number">0</span>);</span><br><span class="line">        dummyHead-&gt;next = head;</span><br><span class="line">        </span><br><span class="line">        ListNode* prev = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* curr = dummyHead;</span><br><span class="line">        <span class="type">int</span> diff = right - left;</span><br><span class="line">        <span class="keyword">while</span> (left--) &#123;</span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = curr-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 注意不要成环</span></span><br><span class="line">        ListNode* startNode = prev;</span><br><span class="line">        ListNode* endNode = curr;</span><br><span class="line"></span><br><span class="line">        prev = prev-&gt;next;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (diff--) &#123;</span><br><span class="line">            ListNode* temp = curr-&gt;next;</span><br><span class="line">            curr-&gt;next = prev;</span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        startNode-&gt;next = prev;</span><br><span class="line">        endNode-&gt;next = curr;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dummyHead-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/07/List/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
-      <meta itemprop="name" content="Make1tRight">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Make it right.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/03/07/List/" class="post-title-link" itemprop="url">List</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2025-03-07 23:55:55" itemprop="dateCreated datePublished" datetime="2025-03-07T23:55:55+08:00">2025-03-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-21 22:56:42" itemprop="dateModified" datetime="2025-03-21T22:56:42+08:00">2025-03-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/data-structure/" itemprop="url" rel="index"><span itemprop="name">data structure</span></a>
-                </span>
             </span>
 
           
@@ -2044,6 +1917,185 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/I-O-multiplexing-technology/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/11/15/I-O-multiplexing-technology/" class="post-title-link" itemprop="url">Computer System | I/O multiplexing technology</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-11-15 14:58:49" itemprop="dateCreated datePublished" datetime="2024-11-15T14:58:49+08:00">2024-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-03-08 00:00:05" itemprop="dateModified" datetime="2025-03-08T00:00:05+08:00">2025-03-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="I-O多路复用-select-poll-epoll"><a href="#I-O多路复用-select-poll-epoll" class="headerlink" title="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll"></a>I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</h2><h3 id="最基本的Socket模型"><a href="#最基本的Socket模型" class="headerlink" title="最基本的Socket模型"></a>最基本的Socket模型</h3><ol>
+<li>Socket &#x3D; IP + Port</li>
+<li>服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)</li>
+</ol>
+<h3 id="如何服务更多用户"><a href="#如何服务更多用户" class="headerlink" title="如何服务更多用户?"></a>如何服务更多用户?</h3><ol>
+<li>C10K问题, 就是能否支持并发1万请求</li>
+<li>单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询</span></span><br><span class="line"><span class="built_in">ulimit</span> -n </span><br><span class="line"></span><br><span class="line"><span class="comment"># 设定为m</span></span><br><span class="line"><span class="built_in">ulimit</span> -n m</span><br></pre></td></tr></table></figure>
+
+<h3 id="多进程模型"><a href="#多进程模型" class="headerlink" title="多进程模型"></a>多进程模型</h3><ol>
+<li><p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型</p>
+<table>
+<thead>
+<tr>
+<th>多进程模型(父进程负责监听, 子进程负责处理业务)</th>
+<th>多线程模型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>server在LISTEN状态下, 客户端发起connect</td>
+<td>与多进程模型相同</td>
+</tr>
+<tr>
+<td>服务端accept</td>
+<td>与多进程模型相同</td>
+</tr>
+<tr>
+<td>应用父进程fork一个子进程</td>
+<td>pthread_create()创建新的线程</td>
+</tr>
+<tr>
+<td>子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息)</td>
+<td>在线程中实现与客户端的数据交换</td>
+</tr>
+<tr>
+<td>子进程专门处理数据的读写、父进程继续监听socket</td>
+<td>-</td>
+</tr>
+<tr>
+<td>如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换</td>
+<td>-</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
+</li>
+<li><p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
+</li>
+<li><p>另外，父进程要通过调用wait()&#x2F;pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
+</li>
+</ol>
+<h3 id="多线程模型"><a href="#多线程模型" class="headerlink" title="多线程模型"></a>多线程模型</h3><ol>
+<li>因为多进程模型在使用过程中，进程的上下文切换开销特别大，所以需要更小开销的多线程模型</li>
+<li>多线程模型的优势在于，线程共享进程的代码、全局数据、进程空间、文件描述符列表、堆、共享库等资源  -&gt; 切换线程的时候只需要复制寄存器、线程私有数据等专属资源，开销更小、速度更快</li>
+<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源<ol>
+<li>可以启用线程池，在建立连接之前就将线程创建好</li>
+<li>从全连接队列（ESTABLISHED）中取出全连接对象-&gt;进行数据交换 -&gt; 数据交换结束后也不需要释放对应线程，放回到线程池里即可</li>
+</ol>
+</li>
+</ol>
+<h4 id="I-O多路复用"><a href="#I-O多路复用" class="headerlink" title="I&#x2F;O多路复用"></a>I&#x2F;O多路复用</h4><ol>
+<li>要实现C10K，单纯使用多线程&#x2F;多进程模型意味着需要1w个线程&#x2F;进程，现在自己的电脑也才32线程</li>
+<li>IO多路复用技术类似于CPU的并发技术，对每个socket都分配一个时间片，到期以后切换下一个socket，看起来就像是同时处理了多个socket（也叫时分多路复用技术）</li>
+<li>常见的IO复用技术就是select&#x2F;poll和epoll（看todolist2-day60）<ol>
+<li>select&#x2F;poll都要遍历文件描述符列表去检查哪些socket可读&#x2F;可写；select&#x2F;poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读&#x2F;可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
+<li>epoll维护红黑树[时间复杂度<code>O(logn)</code>]+链表，能够解决C10K问题</li>
+</ol>
+</li>
+<li>边缘触发和水平触发 - select&#x2F;poll只支持LT水平触发，epoll支持LT和ET两种</li>
+</ol>
+<h5 id="Linux下的三种IO复用方式：epoll、select和poll"><a href="#Linux下的三种IO复用方式：epoll、select和poll" class="headerlink" title="Linux下的三种IO复用方式：epoll、select和poll"></a>Linux下的三种IO复用方式：epoll、select和poll</h5><ol>
+<li>select:<ol>
+<li>所有文件描述符在用户态被加入其文件描述符集合，每次调用都需要将整个集合拷贝到内核态</li>
+<li>使用线性表描述文件描述符集合，文件描述符有上限</li>
+<li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
+<li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
+</ol>
+</li>
+<li>poll:<ol>
+<li>所有文件描述符都是在用户态被加入其文件描述符集合的，每次调用都需要将整个集合拷贝到内核态</li>
+<li>使用链表来描述文件描述符集合</li>
+<li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
+<li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
+</ol>
+</li>
+<li>epoll:<ol>
+<li>将整个文件描述符集合维护在内核态，每次添加文件描述符的时候都需要执行一个系统调用(系统调用的开销很大， 因此在有很多短期活跃连接的情况下，epoll可能会慢于select和poll)</li>
+<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可<ol>
+<li>待检测的socket加入到自己维护的红黑树中</li>
+<li>epoll_wait从链表中取出已经就绪的socket</li>
+<li>红黑树的增删改时间复杂度是O(logn)比bitsmap和动态数组的O(n)效率更高</li>
+<li>不用去遍历哪个可读&#x2F;可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
+<li>另外，epoll仍旧需要把数据从内核态拷贝到用户态</li>
+</ol>
+</li>
+<li>不需要遍历整个文件描述符集合，当有活动产生时，会自动触发epoll回调函数通知epoll文件描述符，然后内核将这些就绪的文件描述符放到之前提到的ready list中等待epoll_wait调用后被处理</li>
+<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)<ol>
+<li>LT会去遍历在epoll事件表中每个文件描述符，来观察是否有我们感兴趣的事件发生，如果有（触发了该文件描述符上的回调函数），epoll_wait就会以非阻塞的方式返回。若该epoll事件没有被处理完（没有返回EWOULDBLOCK），该事件还会被后续的epoll_wait再次触发</li>
+<li>ET在发现有我们感兴趣的事件发生后，立即返回，并且sleep这一事件的epoll_wait，不管该事件有没有结束 -&gt; 使用ET模式必须保证fd是非阻塞的，每次调用read和write的时候都必须等到他们返回EWOULDBLOCK</li>
+</ol>
+</li>
+<li>监测的fd数量较小，且各个fd都很活跃的情况下，建议使用select和poll，当监听的fd数量较多，且单位时间仅部分fd活跃的情况下，使用epoll会明显提升性能</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -2115,20 +2167,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

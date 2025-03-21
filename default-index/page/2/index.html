@@ -155,185 +155,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/I-O-multiplexing-technology/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
-      <meta itemprop="name" content="Make1tRight">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Make it right.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/15/I-O-multiplexing-technology/" class="post-title-link" itemprop="url">Computer System | I/O multiplexing technology</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2024-11-15 14:58:49" itemprop="dateCreated datePublished" datetime="2024-11-15T14:58:49+08:00">2024-11-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-08 00:00:05" itemprop="dateModified" datetime="2025-03-08T00:00:05+08:00">2025-03-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/basic-computer-knowledge/" itemprop="url" rel="index"><span itemprop="name">basic computer knowledge</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="I-O多路复用-select-poll-epoll"><a href="#I-O多路复用-select-poll-epoll" class="headerlink" title="I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll"></a>I&#x2F;O多路复用: select&#x2F;poll&#x2F;epoll</h2><h3 id="最基本的Socket模型"><a href="#最基本的Socket模型" class="headerlink" title="最基本的Socket模型"></a>最基本的Socket模型</h3><ol>
-<li>Socket &#x3D; IP + Port</li>
-<li>服务器内核为每个SOCKET都维护了一个半连接队列(SYN_RCVD)和一个全连接队列(ESTABLISHED)</li>
-</ol>
-<h3 id="如何服务更多用户"><a href="#如何服务更多用户" class="headerlink" title="如何服务更多用户?"></a>如何服务更多用户?</h3><ol>
-<li>C10K问题, 就是能否支持并发1万请求</li>
-<li>单个进程能够打开的文件描述符数量可以通过修改ulimit参数来修改</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询</span></span><br><span class="line"><span class="built_in">ulimit</span> -n </span><br><span class="line"></span><br><span class="line"><span class="comment"># 设定为m</span></span><br><span class="line"><span class="built_in">ulimit</span> -n m</span><br></pre></td></tr></table></figure>
-
-<h3 id="多进程模型"><a href="#多进程模型" class="headerlink" title="多进程模型"></a>多进程模型</h3><ol>
-<li><p>为了让服务器和多个客户端建立连接，给每个客户端分配一个进程 -&gt; 多进程模型</p>
-<table>
-<thead>
-<tr>
-<th>多进程模型(父进程负责监听, 子进程负责处理业务)</th>
-<th>多线程模型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>server在LISTEN状态下, 客户端发起connect</td>
-<td>与多进程模型相同</td>
-</tr>
-<tr>
-<td>服务端accept</td>
-<td>与多进程模型相同</td>
-</tr>
-<tr>
-<td>应用父进程fork一个子进程</td>
-<td>pthread_create()创建新的线程</td>
-</tr>
-<tr>
-<td>子进程复制父进程的文件描述符、内存地址空间、程序计数器、执行的代码等资源(包括与客户端相关的信息)</td>
-<td>在线程中实现与客户端的数据交换</td>
-</tr>
-<tr>
-<td>子进程专门处理数据的读写、父进程继续监听socket</td>
-<td>-</td>
-</tr>
-<tr>
-<td>如果有新的客户端调用connect, 父进程再fork新的子进程与客户端进行数据交换</td>
-<td>-</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>父子进程用返回值来区分: 0 -&gt; 子进程, 其他整数 -&gt; 父进程； 父进程只关心监听socket，不关心已连接socket；子进程只关心已连接socket，不关心监听socket</p>
-</li>
-<li><p>多进程模型的问题, 父子进程之间的上下文切换要复制虚拟内存、全局变量、数据、文件、寄存器和栈等等资源 -&gt; 上下文切换的次数越多 -&gt; 系统性能就越下降</p>
-</li>
-<li><p>另外，父进程要通过调用wait()&#x2F;pidwait()函数合法回收子进程，否则这些子进程会变成僵尸进程-&gt;同样消耗系统资源</p>
-</li>
-</ol>
-<h3 id="多线程模型"><a href="#多线程模型" class="headerlink" title="多线程模型"></a>多线程模型</h3><ol>
-<li>因为多进程模型在使用过程中，进程的上下文切换开销特别大，所以需要更小开销的多线程模型</li>
-<li>多线程模型的优势在于，线程共享进程的代码、全局数据、进程空间、文件描述符列表、堆、共享库等资源  -&gt; 切换线程的时候只需要复制寄存器、线程私有数据等专属资源，开销更小、速度更快</li>
-<li>虽然说线程的上下文切换开销不大，但是不断创造、删除线程也会消耗很多的系统资源<ol>
-<li>可以启用线程池，在建立连接之前就将线程创建好</li>
-<li>从全连接队列（ESTABLISHED）中取出全连接对象-&gt;进行数据交换 -&gt; 数据交换结束后也不需要释放对应线程，放回到线程池里即可</li>
-</ol>
-</li>
-</ol>
-<h4 id="I-O多路复用"><a href="#I-O多路复用" class="headerlink" title="I&#x2F;O多路复用"></a>I&#x2F;O多路复用</h4><ol>
-<li>要实现C10K，单纯使用多线程&#x2F;多进程模型意味着需要1w个线程&#x2F;进程，现在自己的电脑也才32线程</li>
-<li>IO多路复用技术类似于CPU的并发技术，对每个socket都分配一个时间片，到期以后切换下一个socket，看起来就像是同时处理了多个socket（也叫时分多路复用技术）</li>
-<li>常见的IO复用技术就是select&#x2F;poll和epoll（看todolist2-day60）<ol>
-<li>select&#x2F;poll都要遍历文件描述符列表去检查哪些socket可读&#x2F;可写；select&#x2F;poll首先要把文件描述符列表复制到内核，让内核去检查并标记哪些socket可读&#x2F;可写，然后再将文件描述符列表复制回用户态，在用户空间对socket进行读写。总共2次遍历，2次复制。时间复杂度O(n)</li>
-<li>epoll维护红黑树[时间复杂度<code>O(logn)</code>]+链表，能够解决C10K问题</li>
-</ol>
-</li>
-<li>边缘触发和水平触发 - select&#x2F;poll只支持LT水平触发，epoll支持LT和ET两种</li>
-</ol>
-<h5 id="Linux下的三种IO复用方式：epoll、select和poll"><a href="#Linux下的三种IO复用方式：epoll、select和poll" class="headerlink" title="Linux下的三种IO复用方式：epoll、select和poll"></a>Linux下的三种IO复用方式：epoll、select和poll</h5><ol>
-<li>select:<ol>
-<li>所有文件描述符在用户态被加入其文件描述符集合，每次调用都需要将整个集合拷贝到内核态</li>
-<li>使用线性表描述文件描述符集合，文件描述符有上限</li>
-<li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
-<li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
-</ol>
-</li>
-<li>poll:<ol>
-<li>所有文件描述符都是在用户态被加入其文件描述符集合的，每次调用都需要将整个集合拷贝到内核态</li>
-<li>使用链表来描述文件描述符集合</li>
-<li>每次执行select或poll调用时，它们会采用遍历的方式，遍历整个文件描述符集合去判断各个文件描述符是否有活动</li>
-<li>只能工作在相对低效的LT模式下(Level Trigger, 电平触发)</li>
-</ol>
-</li>
-<li>epoll:<ol>
-<li>将整个文件描述符集合维护在内核态，每次添加文件描述符的时候都需要执行一个系统调用(系统调用的开销很大， 因此在有很多短期活跃连接的情况下，epoll可能会慢于select和poll)</li>
-<li>底层通过红黑树来描述文件描述符集合，并且维护一个ready list，将事件表中已经就绪的事件添加到这里，在使用epoll_wait调用时，仅观察ready list中有没有数据即可<ol>
-<li>待检测的socket加入到自己维护的红黑树中</li>
-<li>epoll_wait从链表中取出已经就绪的socket</li>
-<li>红黑树的增删改时间复杂度是O(logn)比bitsmap和动态数组的O(n)效率更高</li>
-<li>不用去遍历哪个可读&#x2F;可写-&gt;取出来就处理（链表对象是通过回调函数添加的）</li>
-<li>另外，epoll仍旧需要把数据从内核态拷贝到用户态</li>
-</ol>
-</li>
-<li>不需要遍历整个文件描述符集合，当有活动产生时，会自动触发epoll回调函数通知epoll文件描述符，然后内核将这些就绪的文件描述符放到之前提到的ready list中等待epoll_wait调用后被处理</li>
-<li>epoll同时支持LT和ET模式(Edge Trigger, 边沿触发)<ol>
-<li>LT会去遍历在epoll事件表中每个文件描述符，来观察是否有我们感兴趣的事件发生，如果有（触发了该文件描述符上的回调函数），epoll_wait就会以非阻塞的方式返回。若该epoll事件没有被处理完（没有返回EWOULDBLOCK），该事件还会被后续的epoll_wait再次触发</li>
-<li>ET在发现有我们感兴趣的事件发生后，立即返回，并且sleep这一事件的epoll_wait，不管该事件有没有结束 -&gt; 使用ET模式必须保证fd是非阻塞的，每次调用read和write的时候都必须等到他们返回EWOULDBLOCK</li>
-</ol>
-</li>
-<li>监测的fd数量较小，且各个fd都很活跃的情况下，建议使用select和poll，当监听的fd数量较多，且单位时间仅部分fd活跃的情况下，使用epoll会明显提升性能</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/15/zero_copy_technology/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1816,20 +1637,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
