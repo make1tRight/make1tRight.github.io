@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-21 22:50:25" itemprop="dateModified" datetime="2025-03-21T22:50:25+08:00">2025-03-21</time>
+                <time title="Modified: 2025-03-21 22:56:42" itemprop="dateModified" datetime="2025-03-21T22:56:42+08:00">2025-03-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +209,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="增"><a href="#增" class="headerlink" title="增"></a>增</h3><h4 id="随机链表的复制"><a href="#随机链表的复制" class="headerlink" title="随机链表的复制"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/copy-list-with-random-pointer/description/?envType=study-plan-v2&envId=top-100-liked">随机链表的复制</a></h4><p>深拷贝一个随机链表<br><strong>解题步骤与思路O(n)&#x2F;O(n):</strong></p>
+          <h3 id="增"><a class="markdownIt-Anchor" href="#增"></a> 增</h3>
+<h4 id="随机链表的复制"><a class="markdownIt-Anchor" href="#随机链表的复制"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/copy-list-with-random-pointer/description/?envType=study-plan-v2&amp;envId=top-100-liked">随机链表的复制</a></h4>
+<p>深拷贝一个随机链表<br />
+<strong>解题步骤与思路O(n)/O(n):</strong></p>
 <ol>
 <li>构造哈希表记录已构造链表防止无限递归</li>
 <li>递归遍历链表</li>
@@ -218,28 +221,30 @@
 <li>递归拷贝random指针</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    unordered_map&lt;Node*, Node*&gt; nmap;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">copyRandomList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (head == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!nmap.<span class="built_in">count</span>(head)) &#123;</span><br><span class="line">            Node* newnode = <span class="keyword">new</span> <span class="built_in">Node</span>(head-&gt;val);</span><br><span class="line">            nmap[head] = newnode;</span><br><span class="line">            newnode-&gt;next = <span class="built_in">copyRandomList</span>(head-&gt;next);</span><br><span class="line">            newnode-&gt;random = <span class="built_in">copyRandomList</span>(head-&gt;random);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nmap[head];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="删"><a href="#删" class="headerlink" title="删"></a>删</h3><h3 id="查"><a href="#查" class="headerlink" title="查"></a>查</h3><h4 id="回文链表"><a href="#回文链表" class="headerlink" title="回文链表"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/palindrome-linked-list/description/?envType=study-plan-v2&envId=top-100-liked">回文链表</a></h4><p>给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。</p>
-<p><strong>思路1：O(n)&#x2F;O(n)</strong></p>
+<h3 id="删"><a class="markdownIt-Anchor" href="#删"></a> 删</h3>
+<h3 id="查"><a class="markdownIt-Anchor" href="#查"></a> 查</h3>
+<h4 id="回文链表"><a class="markdownIt-Anchor" href="#回文链表"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/palindrome-linked-list/description/?envType=study-plan-v2&amp;envId=top-100-liked">回文链表</a></h4>
+<p>给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。</p>
+<p><strong>思路1：O(n)/O(n)</strong></p>
 <ol>
 <li>遍历链表, 记录所有节点到数组</li>
 <li>双指针判断数组是否为回文串</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPalindrome</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* curr = head;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; vec;</span><br><span class="line">        <span class="comment">// 遍历链表, 记录所有节点到数组</span></span><br><span class="line">        <span class="keyword">while</span> (curr != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            vec.<span class="built_in">push_back</span>(curr-&gt;val);</span><br><span class="line">            curr = curr-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 双指针判断数组是否为回文串</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>, j = vec.<span class="built_in">size</span>() - <span class="number">1</span>; i &lt; j; ++i, --j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (vec[i] != vec[j]) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>思路2：O(n)&#x2F;O(1)</strong></p>
+<p><strong>思路2：O(n)/O(1)</strong></p>
 <ol>
-<li>快慢指针找到链表中点&#x2F;右半链表第一个节点</li>
+<li>快慢指针找到链表中点/右半链表第一个节点</li>
 <li>反转后半链表, 得到2个子链表</li>
 <li>各自遍历子链表, 两边值只要不同直接返回false, 否则返回true</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 快慢指针找到链表中点/右半链表第一个节点</span></span><br><span class="line">    <span class="function">ListNode* <span class="title">findMid</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* slow = head;</span><br><span class="line">        ListNode* fast = head;</span><br><span class="line">        <span class="keyword">while</span> (fast != <span class="literal">nullptr</span> &amp;&amp; fast-&gt;next != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            fast = fast-&gt;next-&gt;next;</span><br><span class="line">            slow = slow-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> slow;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* prev = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* curr = head;</span><br><span class="line">        <span class="keyword">while</span> (curr != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            ListNode* temp = curr-&gt;next;</span><br><span class="line">            curr-&gt;next = prev;</span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> prev;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPalindrome</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* mid = <span class="built_in">findMid</span>(head);</span><br><span class="line">        <span class="comment">// 反转后半链表, 得到2个子链表</span></span><br><span class="line">        ListNode* head2 = <span class="built_in">reverseList</span>(mid);</span><br><span class="line">        <span class="comment">// 各自遍历子链表, 两边值只要不同直接返回false, 否则返回true</span></span><br><span class="line">        <span class="keyword">while</span> (head2) &#123;</span><br><span class="line">            <span class="keyword">if</span> (head-&gt;val != head2-&gt;val) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            head = head-&gt;next;</span><br><span class="line">            head2 = head2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="改"><a href="#改" class="headerlink" title="改"></a>改</h3><h4 id="反转链表"><a href="#反转链表" class="headerlink" title="反转链表"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list/description/?envType=study-plan-v2&envId=top-100-liked">反转链表</a></h4><p>给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。</p>
+<h3 id="改"><a class="markdownIt-Anchor" href="#改"></a> 改</h3>
+<h4 id="反转链表"><a class="markdownIt-Anchor" href="#反转链表"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list/description/?envType=study-plan-v2&amp;envId=top-100-liked">反转链表</a></h4>
+<p>给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。</p>
 <p><strong>思路：</strong></p>
 <ol>
-<li>翻转链表需要3个指针<ol>
+<li>翻转链表需要3个指针
+<ol>
 <li>变动的是curr的指针, 所以指针在变动前需要有一个temp指针用于备份下一个节点位置</li>
 <li>curr更新完后要指向的是prev节点</li>
 <li>调整完指针以后, prev和curr各自向前移位1个节点</li>
@@ -247,13 +252,15 @@
 </li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* prev = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* curr = head;</span><br><span class="line">        <span class="keyword">while</span> (curr != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            ListNode* temp = curr-&gt;next;</span><br><span class="line">            curr-&gt;next = prev;<span class="comment">// 反转的逻辑</span></span><br><span class="line">            <span class="comment">// 走到下一个节点</span></span><br><span class="line">            prev = curr;</span><br><span class="line">            curr = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> prev;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h4 id="反转链表Ⅱ"><a href="#反转链表Ⅱ" class="headerlink" title="反转链表Ⅱ"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list-ii/">反转链表Ⅱ</a></h4><p>给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;&#x3D; right 。<br>请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。</p>
+<h4 id="反转链表ii"><a class="markdownIt-Anchor" href="#反转链表ii"></a> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list-ii/">反转链表Ⅱ</a></h4>
+<p>给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;= right 。<br />
+请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。</p>
 <p><strong>思路：</strong></p>
 <ol>
 <li>翻转链表需要3个指针 - 同反转链表</li>
 <li>这一题定义虚拟头结点的意义是在开始前记录一下状态</li>
-<li>本题的难点在于处理左右边界的条件<ol>
+<li>本题的难点在于处理左右边界的条件
+<ol>
 <li>和反转链表的区别在于, 首个要调整的节点指针要先保存, 因为他要指向的对象还没到</li>
 <li>保存完1的状态以后, prev和curr往前走1个节点再开始进行中间节点的调整</li>
 <li>因为prev的next要指向最终的prev, curr的next要指向最终的curr</li>
