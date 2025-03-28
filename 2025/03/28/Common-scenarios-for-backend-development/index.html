@@ -20,15 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Make it right.">
-<meta property="og:url" content="http://example.com/tags/algorithm/index.html">
+  <meta name="description" content="高并发处理场景概述用户量激增导致大量请求涌入, 服务器负载过高 解决办法:  Ngnix实现负载均衡，将连接分发到不同节点 让用户请求进入到消息队列中，后端服务异步处理 redis缓存热点数据, 减少数据库查询次数(为什么要减少数据库查询次数?)  具体场景抢优惠券的场景，有10w张优惠券，假设有1亿个用户需要访问该网站抢夺优惠券。如何做好服务器的设置，如何保证数据库能够正常运行？后台服务的优化：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Common scenarios for backend development">
+<meta property="og:url" content="http://example.com/2025/03/28/Common-scenarios-for-backend-development/index.html">
 <meta property="og:site_name" content="Make it right.">
+<meta property="og:description" content="高并发处理场景概述用户量激增导致大量请求涌入, 服务器负载过高 解决办法:  Ngnix实现负载均衡，将连接分发到不同节点 让用户请求进入到消息队列中，后端服务异步处理 redis缓存热点数据, 减少数据库查询次数(为什么要减少数据库查询次数?)  具体场景抢优惠券的场景，有10w张优惠券，假设有1亿个用户需要访问该网站抢夺优惠券。如何做好服务器的设置，如何保证数据库能够正常运行？后台服务的优化：">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-03-28T02:38:32.000Z">
+<meta property="article:modified_time" content="2025-03-28T03:42:07.441Z">
 <meta property="article:author" content="Make1tRight">
+<meta property="article:tag" content="backend development scenarios">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/tags/algorithm/">
+<link rel="canonical" href="http://example.com/2025/03/28/Common-scenarios-for-backend-development/">
 
 
 <script id="page-configurations">
@@ -36,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Tag: algorithm | Make it right.</title>
+  <title>Common scenarios for backend development | Make it right.</title>
   
 
 
@@ -149,231 +154,119 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">algorithm
-          <small>Tag</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/28/Common-scenarios-for-backend-development/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/xiaoxin.jpg">
+      <meta itemprop="name" content="Make1tRight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Make it right.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Common scenarios for backend development
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2025-03-28 10:38:32 / Modified: 11:42:07" itemprop="dateCreated datePublished" datetime="2025-03-28T10:38:32+08:00">2025-03-28</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2024</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-12-19T08:57:20+08:00"
-              content="2024-12-19">
-          12-19
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/12/19/Greedy-Algorithm/" itemprop="url">
-            <span itemprop="name">Greedy Algorithm</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-12-10T11:54:24+08:00"
-              content="2024-12-10">
-          12-10
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/12/10/Backtracking/" itemprop="url">
-            <span itemprop="name">Backtracking</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-12-02T08:45:48+08:00"
-              content="2024-12-02">
-          12-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/12/02/Dynamic-Programming/" itemprop="url">
-            <span itemprop="name">Dynamic Programming</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-16T11:02:58+08:00"
-              content="2024-11-16">
-          11-16
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/16/Monotone-Stack/" itemprop="url">
-            <span itemprop="name">Monotone Stack</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-14T10:06:48+08:00"
-              content="2024-11-14">
-          11-14
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/14/Hash-Table/" itemprop="url">
-            <span itemprop="name">Hash Table</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-13T09:46:00+08:00"
-              content="2024-11-13">
-          11-13
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/13/String/" itemprop="url">
-            <span itemprop="name">String</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-10T09:50:36+08:00"
-              content="2024-11-10">
-          11-10
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/10/Array/" itemprop="url">
-            <span itemprop="name">Array</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-08T14:15:32+08:00"
-              content="2024-11-08">
-          11-08
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/08/Stack-Queue/" itemprop="url">
-            <span itemprop="name">Stack & Queue</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-07T11:06:14+08:00"
-              content="2024-11-07">
-          11-07
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/07/Binary-Tree/" itemprop="url">
-            <span itemprop="name">Binary Tree</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2024-11-04T22:17:31+08:00"
-              content="2024-11-04">
-          11-04
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/11/04/Graph-Theory/" itemprop="url">
-            <span itemprop="name">Graph Theory</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
+        <h2 id="高并发处理"><a href="#高并发处理" class="headerlink" title="高并发处理"></a>高并发处理</h2><h3 id="场景概述"><a href="#场景概述" class="headerlink" title="场景概述"></a>场景概述</h3><p>用户量激增导致大量请求涌入, 服务器负载过高</p>
+<p><strong>解决办法:</strong></p>
+<ol>
+<li>Ngnix实现负载均衡，将连接分发到不同节点</li>
+<li>让用户请求进入到消息队列中，后端服务异步处理</li>
+<li>redis缓存热点数据, 减少数据库查询次数(为什么要减少数据库查询次数?)</li>
+</ol>
+<h3 id="具体场景"><a href="#具体场景" class="headerlink" title="具体场景"></a>具体场景</h3><p>抢优惠券的场景，有10w张优惠券，假设有1亿个用户需要访问该网站抢夺优惠券。如何做好服务器的设置，如何保证数据库能够正常运行？<br><strong>后台服务的优化：</strong></p>
+<ol>
+<li>应用服务需要采用多台实例，使用分布式设计 </li>
+<li>Ngnix实现负载均衡，将连接分发到不同节点</li>
+<li>使用消息队列，让用户请求进入到消息队列中，后端服务异步处理</li>
+</ol>
+<p><strong>数据库的优化：</strong></p>
+<ol>
+<li>缓存优化，将优惠券信息存入redis中，用户请求先查询redis</li>
+<li>用户抢夺优惠券的状态、活动规则等存到redis中，减小数据库压力</li>
+<li>主从架构，主库负责写，从库负责读</li>
+<li>分库分表，按照user_id%10分成多个库、按照coupon_id%100分成多张表</li>
+<li>用户秒杀成功后，先写入到redis+消息队列中，后台异步入库</li>
+</ol>
+<p><strong>其他优化：</strong></p>
+<ol>
+<li>登陆验证（滑动验证码），防止机器人恶意抢刷</li>
+<li>检测并限制异常IP</li>
+<li>JMeter&#x2F;Locust在实际应用场景之前模拟真实流量进行高并发测试</li>
+</ol>
+<h2 id="数据存储与访问优化"><a href="#数据存储与访问优化" class="headerlink" title="数据存储与访问优化"></a>数据存储与访问优化</h2><h3 id="场景概述-1"><a href="#场景概述-1" class="headerlink" title="场景概述"></a>场景概述</h3><p>关系型数据库查询性能低下导致系统响应变慢</p>
+<p><strong>解决办法:</strong></p>
+<ol>
+<li>索引优化</li>
+<li>数据库分库分表, 将数据拆分到多个数据库中</li>
+<li>redis缓存热点数据, 减少数据库查询次数(为什么要减少数据库查询次数?)</li>
+<li>安全防护: 使用预编译SQL语句防止SQL注入</li>
+</ol>
+<h2 id="容灾与高可用"><a href="#容灾与高可用" class="headerlink" title="容灾与高可用"></a>容灾与高可用</h2><h3 id="场景概述-2"><a href="#场景概述-2" class="headerlink" title="场景概述"></a>场景概述</h3><p>服务器故障时确保系统不宕机, 且服务可用</p>
+<p><strong>解决办法:</strong></p>
+<ol>
+<li>MySQL主从架构, Redis Sentinel实现自动故障转移</li>
+</ol>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/backend-development-scenarios/" rel="tag"># backend development scenarios</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/03/21/List/" rel="prev" title="List">
+      <i class="fa fa-chevron-left"></i> List
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
@@ -426,6 +319,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91%E5%A4%84%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">高并发处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">场景概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E5%9C%BA%E6%99%AF"><span class="nav-number">1.2.</span> <span class="nav-text">具体场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B8%8E%E8%AE%BF%E9%97%AE%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">数据存储与访问优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%A6%82%E8%BF%B0-1"><span class="nav-number">2.1.</span> <span class="nav-text">场景概述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E7%81%BE%E4%B8%8E%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">容灾与高可用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%A6%82%E8%BF%B0-2"><span class="nav-number">3.1.</span> <span class="nav-text">场景概述</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
